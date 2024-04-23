@@ -18,6 +18,11 @@ public class UI_Handler : MonoBehaviour {
     private Dictionary<int, string> PlayerLayout = new Dictionary<int, string>();
     private List<GameObject> ActivePlayerTemplates = new List<GameObject>();
 
+    [Header("Lobby Creator Elements")] 
+    [SerializeField] private GameObject PublicButton;
+    [SerializeField] private GameObject PrivateButton;
+    private bool IsPrivateLobby = false;
+
     void Start() {
         InitializePresets();
         UpdateUIPreset(ActivePreset);
@@ -97,5 +102,11 @@ public class UI_Handler : MonoBehaviour {
     private void UpdateUIPreset(string NewPreset) {
         if (!UI_Colour_Presets.ContainsKey(NewPreset)) return; // If the key doesn't exist it'll return
         ApplyUIPreset(UI_Colour_Presets[NewPreset]);
+    }
+
+    public void SetLobbyState(bool NewState) {
+        IsPrivateLobby = NewState;
+        PublicButton.transform.Find("Top").GetComponent<Image>().color = IsPrivateLobby ? new Color(0, 0.6274f, 1) : new Color(0, 0.488642f, 0.7987421f);
+        PrivateButton.transform.Find("Top").GetComponent<Image>().color = IsPrivateLobby ? new Color(0, 0.488642f, 0.7987421f) : new Color(0, 0.6274f, 1);
     }
 }

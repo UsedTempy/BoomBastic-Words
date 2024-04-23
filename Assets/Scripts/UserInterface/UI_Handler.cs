@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using Unity.Mathematics;
+using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.UI;
@@ -46,6 +48,12 @@ public class UI_Handler : MonoBehaviour {
     [SerializeField] private GameObject BackgroundContent;
     private Dictionary<string, GameObject> Pages = new Dictionary<string, GameObject>();
 
+
+    [Header("Server List Content")]
+    [SerializeField] private GameObject ServerTemplate;
+    [SerializeField] private GameObject ServerParent;
+    private Dictionary<string, LobbyClass> ActiveLobbies = new Dictionary<string, LobbyClass>();
+
     private bool IsPrivateLobby = false;
 
     void Start() {
@@ -58,6 +66,7 @@ public class UI_Handler : MonoBehaviour {
         Pages.Add("GameContent", GameContent);
 
         SetUserInterfaceState("ServerList", true);
+        LobbyHandler.RefreshLobbyList();
     }
 
     void Update() {
@@ -158,6 +167,7 @@ public class UI_Handler : MonoBehaviour {
         SetLoadingState(true);
 
         LobbyHandler.CreateLobby(Field.text, 12);
+        Field.text = "";
     }
 
     public void SetUserInterfaceState(string State, bool Active) {
@@ -167,6 +177,37 @@ public class UI_Handler : MonoBehaviour {
             if (State == "GameContent") {
                 BackgroundContent.transform.Find("Shapes").gameObject.SetActive(!Active);
             }
+        }
+    }
+
+    public void DisplayServerLobbies(QueryResponse LobbyListQueryResponse) {
+        foreach (Lobby ActiveLobby in LobbyListQueryResponse.Results) {
+            if (ActiveLobbies.ContainsKey(ActiveLobby.Id)) {
+                GameObject NewLobbyTemplate = ActiveLobbies[ActiveLobby.Id].LobbyTemplate;
+
+                NewLobbyTemplate.transform.Find("LobbyCount").GetComponent<TMP_Text>().text = ActiveLobby.Players.Count.ToString() + "/" + ActiveLobby.MaxPlayers.ToString();
+                NewLobbyTemplate.transform.Find("LobbyName").GetComponent<TMP_Text>().text = ActiveLobby.Name;
+            } else { // Create a new template
+                GameObject NewLobbyTemplate = Instantiate(ServerTemplate, ServerParent.transform);
+
+                NewLobbyTemplate.transform.Find("LobbyCount").GetComponent<TMP_Text>().text = ActiveLobby.Players.Count.ToString() + "/" + ActiveLobby.MaxPlayers.ToString();
+                NewLobbyTemplate.transform.Find("LobbyName").GetComponent<TMP_Text>().text = ActiveLobby.Name;
+                NewLobbyTemplate.SetActive(true);
+
+                ActiveLobbies.Add(ActiveLobby.Id, new LobbyClass(ActiveLobby, NewLobbyTemplate));
+            }
+        }
+
+        List<string> KeysToRemove = new List<string>();
+        foreach (KeyValuePair<string, LobbyClass> ActiveLobby in ActiveLobbies) {
+            if (!LobbyListQueryResponse.Results.Contains(ActiveLobby.Value.Lobby)) {
+                Destroy(ActiveLobby.Value.LobbyTemplate);
+                KeysToRemove.Add(ActiveLobby.Value.Lobby.Id);
+            }
+        }
+
+        for (int i = 0; i < KeysToRemove.Count; i++) {
+            ActiveLobbies.Remove(KeysToRemove[i]);
         }
     }
 

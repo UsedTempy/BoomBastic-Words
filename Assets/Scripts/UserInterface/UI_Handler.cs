@@ -54,6 +54,12 @@ public class UI_Handler : MonoBehaviour {
     [SerializeField] private GameObject ServerParent;
     private Dictionary<string, LobbyClass> ActiveLobbies = new Dictionary<string, LobbyClass>();
 
+    [Header("Player Info List")]
+    [SerializeField] private GameObject PlayerInfoTemplate;
+    [SerializeField] private GameObject PlayerInfoParent;
+    private Dictionary<string, InfoTemplate> LobbyPlayerTemplates = new Dictionary<string, InfoTemplate>();
+
+
     private bool IsPrivateLobby = false;
 
     void Start() {
@@ -82,6 +88,12 @@ public class UI_Handler : MonoBehaviour {
         }
     }
 
+    public void JoinLobby(GameObject LobbyTemplateObject) {
+        Lobby lobby = LobbyTemplateObject.GetComponent<LobbyTemplate>().hostedLobby;
+        if (lobby != null) {
+            LobbyHandler.JoinLobby(lobby);
+        }
+    }
     private void ApplyUIPreset(UI_Preset Preset) {
         GameObject[] MainColourElements = GameObject.FindGameObjectsWithTag("MainColour");
         GameObject[] ShadingColourElements = GameObject.FindGameObjectsWithTag("ShadingColour");
@@ -161,6 +173,62 @@ public class UI_Handler : MonoBehaviour {
         LoadingImage.transform.localScale = new Vector3(5 + SineWave, 5 + SineWave, 1);
     }
 
+    private void UpdateFramesPlayer(Lobby ranLobby) {
+        for (int i = 0; i < ranLobby.Players.Count; i++) {
+            Player player = ranLobby.Players[i];
+ 
+            if (!LobbyPlayerTemplates.ContainsKey(player.Data["PlayerName"].Value)) {
+                GameObject NewPlayerInfoTemplate = Instantiate(PlayerInfoTemplate, PlayerInfoParent.transform);
+
+                NewPlayerInfoTemplate.transform.Find("PlayerName").GetComponent<TMP_Text>().text = player.Data["PlayerName"].Value;
+                NewPlayerInfoTemplate.SetActive(true);
+
+                LobbyPlayerTemplates.Add(player.Data["PlayerName"].Value, new InfoTemplate(player.Id, NewPlayerInfoTemplate));
+            }
+        };
+
+        List<String> PlayersToRemove = new List<String>();
+
+        foreach (KeyValuePair<string, InfoTemplate> Data in LobbyPlayerTemplates) {
+            for (int i = 0; i < ranLobby.Players.Count; i++) {
+                Player player = ranLobby.Players[i];
+
+                if (player.Id == Data.Value.playerID) {
+                    return;
+                }
+            }
+
+            PlayersToRemove.Add(Data.Key);
+        }
+
+        for (int i = 0; i < PlayersToRemove.Count; i++) {
+            Destroy(LobbyPlayerTemplates[PlayersToRemove[i]].Template);
+            LobbyPlayerTemplates.Remove(PlayersToRemove[i]);
+        }
+    }
+
+    public void UpdateLobbyPlayerTemplates() {
+        if (LobbyHandler.HostLobby != null) {
+            UpdateFramesPlayer(LobbyHandler.HostLobby);
+            return;
+        }
+
+        if (LobbyHandler.JoinedLobby != null) {
+            UpdateFramesPlayer(LobbyHandler.JoinedLobby);
+            return;
+        }
+
+        List<string> removePlayersStrings = new List<string>(); 
+        foreach (KeyValuePair<string, InfoTemplate> Data in LobbyPlayerTemplates) {
+            Destroy(Data.Value.Template);
+            removePlayersStrings.Add(Data.Key);
+        }
+
+        for (int i = 0; i < removePlayersStrings.Count; i++) {
+            LobbyPlayerTemplates.Remove(removePlayersStrings[i]);
+        }
+    }
+
     public void CreateButtonFunction(TMP_InputField Field) {
         if (IsProcessing) return;
         if (Field.text.Length <= 4) return;
@@ -192,6 +260,9 @@ public class UI_Handler : MonoBehaviour {
 
                 NewLobbyTemplate.transform.Find("LobbyCount").GetComponent<TMP_Text>().text = ActiveLobby.Players.Count.ToString() + "/" + ActiveLobby.MaxPlayers.ToString();
                 NewLobbyTemplate.transform.Find("LobbyName").GetComponent<TMP_Text>().text = ActiveLobby.Name;
+                NewLobbyTemplate.AddComponent<LobbyTemplate>();
+                NewLobbyTemplate.GetComponent<LobbyTemplate>().hostedLobby = ActiveLobby;
+
                 NewLobbyTemplate.SetActive(true);
 
                 ActiveLobbies.Add(ActiveLobby.Id, new LobbyClass(ActiveLobby, NewLobbyTemplate));

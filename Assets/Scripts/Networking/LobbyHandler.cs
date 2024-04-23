@@ -10,19 +10,23 @@ using UnityEngine;
 using Random = System.Random;
 
 public class LobbyHandler : MonoBehaviour {
-    private Lobby HostLobby;
-    private Lobby JoinedLobby;
+    public Lobby HostLobby;
+    public Lobby JoinedLobby;
 
     private float HeartbeatTimer;
     private float LobbyHeartbeatTimer;
+    private float HostLobbyHeartbeatTimer;
 
-    private string playerName = "Tempy" + new Random().Next(1, 999);
+    private string playerName = "Tempy" + new Random().Next(1, 99999);
 
     [Header("UserInterface")] 
     [SerializeField] private UI_Handler uiHandler;
 
     private async void Start() {
-        await UnityServices.InitializeAsync();
+        InitializationOptions initOptions = new InitializationOptions();
+        initOptions.SetProfile(playerName);
+
+        await UnityServices.InitializeAsync(initOptions);
 
         AuthenticationService.Instance.SignedIn += () => {
             Debug.Log("Signed in " + AuthenticationService.Instance.PlayerId);
@@ -65,7 +69,7 @@ public class LobbyHandler : MonoBehaviour {
                 Player = GetPlayer()
             };
 
-            Lobby ActiveLobby = await LobbyService.Instance.CreateLobbyAsync(LobbyName, MaxPlayers);
+            Lobby ActiveLobby = await LobbyService.Instance.CreateLobbyAsync(LobbyName, MaxPlayers, LobbyOptionData);
             Debug.Log("Created Lobby! " + ActiveLobby.Name + " " + ActiveLobby.MaxPlayers);
 
             HostLobby = ActiveLobby;
@@ -76,49 +80,32 @@ public class LobbyHandler : MonoBehaviour {
         }   
     }
 
-    private async void ListLobbies() {
-        try {
-            QueryLobbiesOptions queryLobbiesOptions = new QueryLobbiesOptions {
-                Count = 9,
-                Filters = new List<QueryFilter> {
-                    new QueryFilter(QueryFilter.FieldOptions.AvailableSlots, "0", QueryFilter.OpOptions.GT)
-                },
-                Order = new List<QueryOrder> {
-                    new QueryOrder(false, QueryOrder.FieldOptions.Created)
-                }
-            };
+    public async void JoinLobby(Lobby lobby) {
+        Debug.Log(lobby.Id);
+        Player player = GetPlayer();
 
-            QueryResponse queryResponse = await Lobbies.Instance.QueryLobbiesAsync();
-            Debug.Log("Lists: " + queryResponse.Results.Count);
+        JoinedLobby = await LobbyService.Instance.JoinLobbyByIdAsync(lobby.Id, new JoinLobbyByIdOptions {
+            Player = player
+        });
 
-            foreach (Lobby ActiveLobby in queryResponse.Results) {
-                Debug.Log(ActiveLobby.Name + " " + ActiveLobby.MaxPlayers);
-            }
-        } catch(LobbyServiceException e) {
-            Debug.Log(e);
-        }
-    }
-
-    private async void JoinLobby(Lobby lobby) {
-        JoinLobbyByIdOptions JoinLobbyOptions = new JoinLobbyByIdOptions {
-            Player = GetPlayer(),
-        };
-
-        Lobby NewJoinedLobby = await Lobbies.Instance.JoinLobbyByIdAsync(lobby.Id, JoinLobbyOptions);
-        JoinedLobby = NewJoinedLobby;
+        Debug.Log(JoinedLobby.Id);
+        uiHandler.SetUserInterfaceState("GameContent", true);
     }
 
     public async void LeaveLobby() {
         try {
             if (HostLobby != null) {
-                MigrateLobbyHost();
                 LobbyService.Instance.RemovePlayerAsync(HostLobby.Id, AuthenticationService.Instance.PlayerId);
-            } else {
-                LobbyService.Instance.RemovePlayerAsync(JoinedLobby.Id, AuthenticationService.Instance.PlayerId);
+                HostLobby = null;
             }
-           
-            uiHandler.SetUserInterfaceState("ServerList", true);
+            
+            if (JoinedLobby != null) {
+                LobbyService.Instance.RemovePlayerAsync(JoinedLobby.Id, AuthenticationService.Instance.PlayerId);
+                JoinedLobby = null;
+            }
 
+            RefreshLobbyList();
+            uiHandler.SetUserInterfaceState("ServerList", true);
         } catch (LobbyServiceException e) {
             Debug.Log(e);
         }
@@ -127,17 +114,6 @@ public class LobbyHandler : MonoBehaviour {
     private async void KickPlayer() {
         try {
             LobbyService.Instance.RemovePlayerAsync(JoinedLobby.Id, AuthenticationService.Instance.PlayerId);
-        } catch (LobbyServiceException e) {
-            Debug.Log(e);
-        }
-    }
-
-    private async void MigrateLobbyHost() {
-        try {
-            HostLobby = await Lobbies.Instance.UpdateLobbyAsync(HostLobby.Id, new UpdateLobbyOptions {
-                HostId = JoinedLobby.Players[1].Id
-            });
-            JoinedLobby = HostLobby;
         } catch (LobbyServiceException e) {
             Debug.Log(e);
         }
@@ -154,8 +130,7 @@ public class LobbyHandler : MonoBehaviour {
     private Player GetPlayer() {
         return new Player {
             Data = new Dictionary<string, PlayerDataObject> {
-                { "PlayerName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, playerName) },
-                { "Wins", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, "1") }
+                { "PlayerName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, playerName) }
             }
         };
     }
@@ -174,6 +149,23 @@ public class LobbyHandler : MonoBehaviour {
 
                 Lobby queryLobby = await LobbyService.Instance.GetLobbyAsync(JoinedLobby.Id);
                 JoinedLobby = queryLobby;
+
+                uiHandler.UpdateLobbyPlayerTemplates();
+            }
+        }
+    }
+
+    private async void HandleHostLobbyPollUpdates() {
+        if (HostLobby != null) {
+            HostLobbyHeartbeatTimer -= Time.deltaTime;
+            if (HostLobbyHeartbeatTimer <= 0f) {
+                float HostLobbyHeartbeatTimerMax = 1.1f;
+                HostLobbyHeartbeatTimer = HostLobbyHeartbeatTimerMax;
+
+                Lobby queryLobby = await LobbyService.Instance.GetLobbyAsync(HostLobby.Id);
+                HostLobby = queryLobby;
+
+                uiHandler.UpdateLobbyPlayerTemplates();
             }
         }
     }
@@ -192,5 +184,7 @@ public class LobbyHandler : MonoBehaviour {
 
     private void Update() {
         HandleLobbyHeartbeat();
+        HandleLobbyPollUpdates();
+        HandleHostLobbyPollUpdates();
     }
 }

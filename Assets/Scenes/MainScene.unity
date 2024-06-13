@@ -1017,10 +1017,10 @@ RectTransform:
   - {fileID: 222610701}
   m_Father: {fileID: 1339589946}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 5.669983, y: -636}
-  m_SizeDelta: {x: -95.339966, y: -1337.74}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 480, y: 102}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &72620554
 MonoBehaviour:
@@ -2643,6 +2643,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 212f6b5701da27d41bc101a9a5503a36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  activePlayers: []
   uiHandler: {fileID: 245371588019450282}
 --- !u!4 &449158126
 Transform:
@@ -8251,8 +8252,8 @@ RectTransform:
   m_Children:
   - {fileID: 1661058821797568698}
   - {fileID: 3790926844371872137}
-  - {fileID: 1502820967}
   - {fileID: 72620553}
+  - {fileID: 1502820967}
   m_Father: {fileID: 8762794127760243851}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -13128,6 +13129,9 @@ MonoBehaviour:
   ServerParent: {fileID: 616610027}
   PlayerInfoTemplate: {fileID: 576665683}
   PlayerInfoParent: {fileID: 53215708}
+  BombMain: {fileID: 0}
+  PlayersFrame: {fileID: 0}
+  StartGameButton: {fileID: 0}
 --- !u!114 &534107763312826668
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13211,7 +13215,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1661058821797568698
 RectTransform:
   m_ObjectHideFlags: 0
@@ -13569,7 +13573,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &6105346555753628898
 MonoBehaviour:
   m_ObjectHideFlags: 0

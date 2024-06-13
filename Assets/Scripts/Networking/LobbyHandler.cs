@@ -17,7 +17,8 @@ public class LobbyHandler : MonoBehaviour {
     private float LobbyHeartbeatTimer;
     private float HostLobbyHeartbeatTimer;
 
-    private string playerName = "Tempy" + new Random().Next(1, 99999);
+    private string playerName = "User_" + new Random().Next(1, 9999);
+    public List<string> activePlayers = new List<string>();
 
     [Header("UserInterface")] 
     [SerializeField] private UI_Handler uiHandler;

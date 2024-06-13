@@ -60,6 +60,12 @@ public class UI_Handler : MonoBehaviour {
     [SerializeField] private GameObject PlayerInfoParent;
     private Dictionary<string, InfoTemplate> LobbyPlayerTemplates = new Dictionary<string, InfoTemplate>();
 
+
+    [Header("Game Content")] 
+    [SerializeField] private GameObject BombMain;
+    [SerializeField] private GameObject PlayersFrame;
+    [SerializeField] private GameObject StartGameButton;
+
     private bool IsPrivateLobby = false;
 
     void Start() {
@@ -143,13 +149,24 @@ public class UI_Handler : MonoBehaviour {
     }
 
     private void RenderPlayerLayout() {
-        List<Vector2> generatedPoints = GeneratePointsAround(CenterPlayerPosition, Mathf.Clamp(Mathf.Sqrt(PlayerLayout.Count * 1.5f), 3f, Mathf.Infinity), PlayerLayout.Count);
+        List<Vector2> generatedPoints = GeneratePointsAround(CenterPlayerPosition, 4.2464f, PlayerLayout.Count);
 
         for (int i = 0; i < generatedPoints.Count; i++) {
             Vector2 offset = generatedPoints[i];
+
             GameObject NewPlayerTemplate = Instantiate(PlayerTemplate, PlayerTemplateParent);
             NewPlayerTemplate.transform.Translate(new Vector3(offset.x, offset.y, 0));
             NewPlayerTemplate.SetActive(true);
+
+            if (LobbyHandler.HostLobby != null) {
+                NewPlayerTemplate.transform.Find("PlayerName").gameObject.GetComponent<TMP_Text>().text =
+                    LobbyHandler.HostLobby.Players[i].Id;
+            }
+
+            if (LobbyHandler.JoinedLobby != null) {
+                NewPlayerTemplate.transform.Find("PlayerName").gameObject.GetComponent<TMP_Text>().text =
+                    LobbyHandler.HostLobby.Players[i].Id;
+            }
 
             ActivePlayerTemplates.Add(NewPlayerTemplate);
         }

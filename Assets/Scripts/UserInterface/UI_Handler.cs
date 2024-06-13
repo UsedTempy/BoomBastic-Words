@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Mathematics;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
@@ -58,7 +59,6 @@ public class UI_Handler : MonoBehaviour {
     [SerializeField] private GameObject PlayerInfoTemplate;
     [SerializeField] private GameObject PlayerInfoParent;
     private Dictionary<string, InfoTemplate> LobbyPlayerTemplates = new Dictionary<string, InfoTemplate>();
-
 
     private bool IsPrivateLobby = false;
 
@@ -174,6 +174,11 @@ public class UI_Handler : MonoBehaviour {
     }
 
     private void UpdateFramesPlayer(Lobby ranLobby) {
+        foreach (KeyValuePair<string, InfoTemplate> entry in LobbyPlayerTemplates){
+            Destroy(entry.Value.Template);
+        }
+        LobbyPlayerTemplates.Clear();
+
         for (int i = 0; i < ranLobby.Players.Count; i++) {
             Player player = ranLobby.Players[i];
  
@@ -186,25 +191,6 @@ public class UI_Handler : MonoBehaviour {
                 LobbyPlayerTemplates.Add(player.Data["PlayerName"].Value, new InfoTemplate(player.Id, NewPlayerInfoTemplate));
             }
         };
-
-        List<String> PlayersToRemove = new List<String>();
-
-        foreach (KeyValuePair<string, InfoTemplate> Data in LobbyPlayerTemplates) {
-            for (int i = 0; i < ranLobby.Players.Count; i++) {
-                Player player = ranLobby.Players[i];
-
-                if (player.Id == Data.Value.playerID) {
-                    return;
-                }
-            }
-
-            PlayersToRemove.Add(Data.Key);
-        }
-
-        for (int i = 0; i < PlayersToRemove.Count; i++) {
-            Destroy(LobbyPlayerTemplates[PlayersToRemove[i]].Template);
-            LobbyPlayerTemplates.Remove(PlayersToRemove[i]);
-        }
     }
 
     public void UpdateLobbyPlayerTemplates() {

@@ -13,11 +13,11 @@ public class RoundManager : NetworkBehaviour {
         if (UserList.Contains(Username)) return;
         UserList.Add(Username);
 
-        AddUserTemplateClientRpc(Username);
+        AddUserTemplateClientRpc();
     }
 
     [ClientRpc]
-    private void AddUserTemplateClientRpc(string Username) {
-        GameplayManager.AddUserTemplate(Username);
+    private void AddUserTemplateClientRpc() {
+        GameplayManager.AddUserTemplate(UserList);
     }
 }

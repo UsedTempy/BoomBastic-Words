@@ -10,7 +10,7 @@ public class PlayerHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start() {
         RoundManager = FindObjectOfType<RoundManager>();
-        Username = $"User_{Mathf.Floor(Random.Range(0f, 9999f))}";
+        Username = $"User_{Mathf.Floor(Random.Range(1000, 9999))}";
 
         RoundManager.AddUserToListServerRPC(Username);
     }

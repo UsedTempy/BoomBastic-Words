@@ -189,6 +189,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UserList: []
+  GameplayManager: {fileID: 8836586360367180664}
 --- !u!1 &33908803697036661
 GameObject:
   m_ObjectHideFlags: 0
@@ -10094,6 +10095,7 @@ GameObject:
   - component: {fileID: 5244243365667088702}
   - component: {fileID: 5672245640093973409}
   - component: {fileID: 8836586360367180663}
+  - component: {fileID: 8836586360367180664}
   m_Layer: 5
   m_Name: UserInterface
   m_TagString: Untagged
@@ -11363,6 +11365,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UserList: []
+  GameplayManager: {fileID: 0}
 --- !u!1 &7505578001400515250
 GameObject:
   m_ObjectHideFlags: 0
@@ -13217,6 +13220,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsHovering: 0
+--- !u!114 &8836586360367180664
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6784080477000286923}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fea6f6a4a0b6b0444ad639f778e923aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerTemplateContainer: {fileID: 6431902129399028706}
+  PlayerTemplate: {fileID: 3570199884401902208}
 --- !u!222 &8844018837105467611
 CanvasRenderer:
   m_ObjectHideFlags: 0

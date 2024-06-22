@@ -132,8 +132,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 660754550}
-  - component: {fileID: 660754549}
   - component: {fileID: 660754548}
+  - component: {fileID: 660754549}
   m_Layer: 0
   m_Name: RoundManager
   m_TagString: Untagged
@@ -173,7 +173,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b19e64b57b7fb684d922a508f716f05d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uiHandler: {fileID: 0}
+  UserList: []
 --- !u!4 &660754550
 Transform:
   m_ObjectHideFlags: 0
@@ -11441,7 +11441,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b19e64b57b7fb684d922a508f716f05d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uiHandler: {fileID: 0}
+  UserList: []
 --- !u!1 &7505578001400515250
 GameObject:
   m_ObjectHideFlags: 0

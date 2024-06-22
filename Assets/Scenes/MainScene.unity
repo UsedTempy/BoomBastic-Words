@@ -480,72 +480,6 @@ RectTransform:
   m_AnchoredPosition: {x: 6.696111, y: 4.4496527}
   m_SizeDelta: {x: 485.62, y: 69.4}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &1980736962
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1980736965}
-  - component: {fileID: 1980736963}
-  - component: {fileID: 1980736964}
-  m_Layer: 0
-  m_Name: RoundManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1980736963
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1980736962}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 573373515
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 1
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
---- !u!114 &1980736964
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1980736962}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b19e64b57b7fb684d922a508f716f05d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  uiHandler: {fileID: 0}
---- !u!4 &1980736965
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1980736962}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.3363599, y: -0.11236669, z: -9.056431}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &445316642739142
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1378,7 +1312,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b19e64b57b7fb684d922a508f716f05d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uiHandler: {fileID: 846169762335755693}
+  UserList: []
 --- !u!114 &683849685019313131
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1766,6 +1700,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 153095609754246813, guid: ec8f450ff00f95a43889e92054a499c6, type: 3}
+      propertyPath: NetworkConfig.ConnectionApproval
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6084883330258174327, guid: ec8f450ff00f95a43889e92054a499c6, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -14028,4 +13966,3 @@ SceneRoots:
   - {fileID: 997296657}
   - {fileID: 847746056072205395}
   - {fileID: 449158126}
-  - {fileID: 1980736965}

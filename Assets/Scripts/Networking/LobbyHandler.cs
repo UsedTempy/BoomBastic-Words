@@ -206,8 +206,6 @@ public class LobbyHandler : NetworkBehaviour {
             try {
                 GoToGameScene();
 
-                Debug.Log("StartGame");
-
                 string relayCode = await MultiplayerRelay.Instance.CreateRelay();
 
                 Lobby lobby = await Lobbies.Instance.UpdateLobbyAsync(HostLobby.Id, new UpdateLobbyOptions {

@@ -8,6 +8,7 @@ using Unity.Services.Core;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Random = System.Random;
 
 public class LobbyHandler : NetworkBehaviour {
@@ -17,6 +18,8 @@ public class LobbyHandler : NetworkBehaviour {
     private float HeartbeatTimer;
     private float LobbyHeartbeatTimer;
     private float HostLobbyHeartbeatTimer;
+    
+    public const string KEY_START_GAME = "StartGame";
 
     private string playerName = "User_" + new Random().Next(1, 9999);
     public List<string> activePlayers = new List<string>();
@@ -154,10 +157,24 @@ public class LobbyHandler : NetworkBehaviour {
                 JoinedLobby = queryLobby;
 
                 uiHandler.UpdateLobbyPlayerTemplates();
+
+                if (JoinedLobby.Data["StartGame"].Value != null && JoinedLobby.Data["StartGame"].Value != "0") {
+                    Debug.Log(JoinedLobby.Data["StartGame"].Value);
+                    //start game
+                    if (!IsLobbyHost()) {
+                        MultiplayerRelay.Instance.JoinRelay(JoinedLobby.Data[KEY_START_GAME].Value);
+                    }
+                    JoinedLobby = null;
+
+                    //OnGameStarted?.Invoke(this, new LobbyEventArgs { lobby = JoinedLobby });
+                }
             }
         }
     }
 
+    public bool IsLobbyHost() {
+        return HostLobby != null && HostLobby.HostId == AuthenticationService.Instance.PlayerId;
+    }
     private async void HandleHostLobbyPollUpdates() {
         if (HostLobby != null) {
             HostLobbyHeartbeatTimer -= Time.deltaTime;
@@ -183,6 +200,33 @@ public class LobbyHandler : NetworkBehaviour {
                 await LobbyService.Instance.SendHeartbeatPingAsync(HostLobby.Id);
             }
         }
+    }
+
+    public async void StartGame() {
+        if (IsLobbyHost()) {
+            try {
+                GoToGameScene();
+
+                Debug.Log("StartGame");
+
+                string relayCode = await MultiplayerRelay.Instance.CreateRelay();
+
+                Lobby lobby = await Lobbies.Instance.UpdateLobbyAsync(HostLobby.Id, new UpdateLobbyOptions {
+                    Data = new Dictionary<string, DataObject> {
+                        { KEY_START_GAME, new DataObject(DataObject.VisibilityOptions.Member, relayCode)}
+                    }
+                });
+
+                HostLobby = lobby;
+            }
+            catch (LobbyServiceException e) {
+                Debug.Log(e);
+            }
+        }
+    }
+
+    private void GoToGameScene() {
+        SceneManager.LoadScene("MainGameplay");
     }
 
     private void Update() {

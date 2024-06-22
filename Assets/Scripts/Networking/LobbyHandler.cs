@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Unity.Netcode;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using Unity.Services.Lobbies;
@@ -9,7 +10,7 @@ using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using Random = System.Random;
 
-public class LobbyHandler : MonoBehaviour {
+public class LobbyHandler : NetworkBehaviour {
     public Lobby HostLobby;
     public Lobby JoinedLobby;
 
@@ -22,6 +23,7 @@ public class LobbyHandler : MonoBehaviour {
 
     [Header("UserInterface")] 
     [SerializeField] private UI_Handler uiHandler;
+    [SerializeField] private RoundManager roundManager;
 
     private async void Start() {
         InitializationOptions initOptions = new InitializationOptions();
@@ -89,7 +91,7 @@ public class LobbyHandler : MonoBehaviour {
             Player = player
         });
 
-        Debug.Log(JoinedLobby.Id);
+        roundManager.AddUserTemplateServerRpc();
         uiHandler.SetUserInterfaceState("GameContent", true);
     }
 

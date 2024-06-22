@@ -6,11 +6,14 @@ using UnityEngine;
 public class RoundManager : NetworkBehaviour {
     [SerializeField] private UI_Handler uiHandler;
 
-    [ServerRpc] public void AddUserTemplateServerRpc() {
-
+    [ServerRpc] 
+    public void AddUserTemplateServerRpc() {
+        Debug.Log("User Joined Server");
+        UpdateUserClientRpc();
     }
 
-    [ClientRpc] private void UpdateUserClientRpc() {
-
+    [ClientRpc] 
+    private void UpdateUserClientRpc() {
+        Debug.Log("Add User Template");
     }
 }

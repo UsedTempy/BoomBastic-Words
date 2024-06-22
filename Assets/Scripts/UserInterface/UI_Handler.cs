@@ -82,8 +82,6 @@ public class UI_Handler : MonoBehaviour {
     }
 
     void Update() {
-        UpdatePlayerLayout();
-        RenderPlayerLayout();
         HandleLoadingEffects();
     }
 
@@ -121,56 +119,56 @@ public class UI_Handler : MonoBehaviour {
         }
     }
 
-    public static List<Vector2> GeneratePointsAround(Vector2 center, float radius, int numPoints) {
-        List<Vector2> points = new List<Vector2>();
+    //public static List<Vector2> GeneratePointsAround(Vector2 center, float radius, int numPoints) {
+    //    List<Vector2> points = new List<Vector2>();
 
-        for (int i = 0; i < numPoints; i++) {
-            float angle = i * 2 * (float)Mathf.PI / numPoints;
-            float x = center.x + radius * (float)Mathf.Cos(angle);
-            float y = center.y + radius * (float)Mathf.Sin(angle);
-            points.Add(new Vector2(x, y));
-        }
+    //    for (int i = 0; i < numPoints; i++) {
+    //        float angle = i * 2 * (float)Mathf.PI / numPoints;
+    //        float x = center.x + radius * (float)Mathf.Cos(angle);
+    //        float y = center.y + radius * (float)Mathf.Sin(angle);
+    //        points.Add(new Vector2(x, y));
+    //    }
 
-        return points;
-    }
+    //    return points;
+    //}
 
-    private void UpdatePlayerLayout() {
-        PlayerLayout.Clear();
+    //private void UpdatePlayerLayout() {
+    //    PlayerLayout.Clear();
 
-        for (int i = 0; i < AmountOfPlayers; i++) {
-            PlayerLayout.Add(i, "Player " + i.ToString());
-        }
+    //    for (int i = 0; i < AmountOfPlayers; i++) {
+    //        PlayerLayout.Add(i, "Player " + i.ToString());
+    //    }
 
-        for (int i = 0; i < ActivePlayerTemplates.Count; i++) {
-            Destroy(ActivePlayerTemplates[i]);
-        }
+    //    for (int i = 0; i < ActivePlayerTemplates.Count; i++) {
+    //        Destroy(ActivePlayerTemplates[i]);
+    //    }
 
-        ActivePlayerTemplates.Clear();
-    }
+    //    ActivePlayerTemplates.Clear();
+    //}
 
-    private void RenderPlayerLayout() {
-        List<Vector2> generatedPoints = GeneratePointsAround(CenterPlayerPosition, 4.2464f, PlayerLayout.Count);
+    //private void RenderPlayerLayout() {
+    //    List<Vector2> generatedPoints = GeneratePointsAround(CenterPlayerPosition, 4.2464f, PlayerLayout.Count);
 
-        for (int i = 0; i < generatedPoints.Count; i++) {
-            Vector2 offset = generatedPoints[i];
+    //    for (int i = 0; i < generatedPoints.Count; i++) {
+    //        Vector2 offset = generatedPoints[i];
 
-            GameObject NewPlayerTemplate = Instantiate(PlayerTemplate, PlayerTemplateParent);
-            NewPlayerTemplate.transform.Translate(new Vector3(offset.x, offset.y, 0));
-            NewPlayerTemplate.SetActive(true);
+    //        GameObject NewPlayerTemplate = Instantiate(PlayerTemplate, PlayerTemplateParent);
+    //        NewPlayerTemplate.transform.Translate(new Vector3(offset.x, offset.y, 0));
+    //        NewPlayerTemplate.SetActive(true);
 
-            if (LobbyHandler.HostLobby != null) {
-                NewPlayerTemplate.transform.Find("PlayerName").gameObject.GetComponent<TMP_Text>().text =
-                    LobbyHandler.HostLobby.Players[i].Id;
-            }
+    //        if (LobbyHandler.HostLobby != null) {
+    //            NewPlayerTemplate.transform.Find("PlayerName").gameObject.GetComponent<TMP_Text>().text =
+    //                LobbyHandler.HostLobby.Players[i].Id;
+    //        }
 
-            if (LobbyHandler.JoinedLobby != null) {
-                NewPlayerTemplate.transform.Find("PlayerName").gameObject.GetComponent<TMP_Text>().text =
-                    LobbyHandler.HostLobby.Players[i].Id;
-            }
+    //        if (LobbyHandler.JoinedLobby != null) {
+    //            NewPlayerTemplate.transform.Find("PlayerName").gameObject.GetComponent<TMP_Text>().text =
+    //                LobbyHandler.HostLobby.Players[i].Id;
+    //        }
 
-            ActivePlayerTemplates.Add(NewPlayerTemplate);
-        }
-    }
+    //        ActivePlayerTemplates.Add(NewPlayerTemplate);
+    //    }
+    //}
 
     private void UpdateUIPreset(string NewPreset) {
         if (!UI_Colour_Presets.ContainsKey(NewPreset)) return; // If the key doesn't exist it'll return

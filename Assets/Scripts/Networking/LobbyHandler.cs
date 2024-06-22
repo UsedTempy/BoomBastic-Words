@@ -94,7 +94,6 @@ public class LobbyHandler : NetworkBehaviour {
             Player = player
         });
 
-        //roundManager.AddUserTemplateServerRpc();
         uiHandler.SetUserInterfaceState("GameContent", true);
     }
 

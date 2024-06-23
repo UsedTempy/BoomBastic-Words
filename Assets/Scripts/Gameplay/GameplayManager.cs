@@ -25,6 +25,9 @@ public class GameplayManager : MonoBehaviour {
     }
 
     public string ReturnMessageField() {
-        return InputFieldObject.GetComponent<TMP_InputField>().text;
+        string InputField = InputFieldObject.GetComponent<TMP_InputField>().text;
+        InputFieldObject.GetComponent<TMP_InputField>().text = "";
+
+        return InputField;
     }
 }

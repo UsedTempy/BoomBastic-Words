@@ -17,10 +17,11 @@ public class PlayerHandler : NetworkBehaviour {
         GameplayManager = FindObjectOfType<GameplayManager>();
         Username = $"User_{Mathf.Floor(Random.Range(1000, 9999))}";
 
-        PlayerClass newPlayerClass = new PlayerClass(Username);
+        PlayerClass newPlayerClass = new PlayerClass(Username, RoundManager);
         playerClasses.Add(Username, newPlayerClass);
 
         RoundManager.AddUserToListServerRPC(Username);
+        newPlayerClass.ResetLives();
 
         GameObject SendButton = GameObject.FindGameObjectWithTag("SendButton");
         if (SendButton) {

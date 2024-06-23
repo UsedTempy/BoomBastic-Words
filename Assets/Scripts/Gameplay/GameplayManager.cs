@@ -20,6 +20,11 @@ public class GameplayManager : NetworkBehaviour {
     [SerializeField] private GameObject PlayerContentParent;
     [SerializeField] private GameObject PlayerContentTemplate;
 
+    [Header("Components")]
+    [SerializeField] private Sprite HeartActive;
+    [SerializeField] private Sprite HeartInactive;
+
+
     private List<GameObject> PlayerTemplates = new List<GameObject>();
     private Dictionary<string, GameObject> PlayerIcons = new Dictionary<string, GameObject>();
 
@@ -51,6 +56,22 @@ public class GameplayManager : NetworkBehaviour {
         newChatMessageObject.transform.Find("Message").GetComponent<TMP_Text>().text = Message;
 
         newChatMessageObject.SetActive(true);
+    }
+
+    public void UpdateLives(string Username, int AmountOfLives) {
+        if (!PlayerIcons.ContainsKey(Username)) return;
+        GameObject PlayerIcon = PlayerIcons[Username];
+            
+        if (AmountOfLives == 1) {
+            PlayerIcon.transform.Find("Life1").GetComponent<Image>().sprite = HeartActive;
+            PlayerIcon.transform.Find("Life2").GetComponent<Image>().sprite = HeartInactive;
+        } else if(AmountOfLives == 2) {
+            PlayerIcon.transform.Find("Life1").GetComponent<Image>().sprite = HeartActive;
+            PlayerIcon.transform.Find("Life2").GetComponent<Image>().sprite = HeartActive;
+        } else {
+            PlayerIcon.transform.Find("Life1").GetComponent<Image>().sprite = HeartInactive;
+            PlayerIcon.transform.Find("Life2").GetComponent<Image>().sprite = HeartInactive;
+        }
     }
 
     public static List<Vector2> GeneratePointsAround(Vector2 center, float radius, int numPoints) {

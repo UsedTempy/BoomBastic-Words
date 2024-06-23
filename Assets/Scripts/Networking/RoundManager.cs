@@ -30,6 +30,12 @@ public class RoundManager : NetworkBehaviour {
         CreateMessagePromptClientRpc(Message, Username);
     }
 
+    [ServerRpc(RequireOwnership = false)]
+    public void UpdatePlayerLivesServerRPC(string Username, int Lives) {
+        UpdatePlayerLivesClientRpc(Username, Lives);
+    }
+
+
     [ClientRpc]
     private void AddUserTemplateClientRpc(string userList) {
         GameplayManager.AddUserTemplate(userList);
@@ -43,5 +49,10 @@ public class RoundManager : NetworkBehaviour {
     [ClientRpc]
     private void UpdatePlayerTemplatesClientRpc(string userList) {
         GameplayManager.UpdatePlayerTemplates(userList);
+    }
+
+    [ClientRpc]
+    private void UpdatePlayerLivesClientRpc(string Username, int Lives) {
+        GameplayManager.UpdateLives(Username, Lives);
     }
 }

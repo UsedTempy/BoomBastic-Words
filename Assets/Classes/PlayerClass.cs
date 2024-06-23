@@ -5,22 +5,22 @@ using UnityEngine;
 public class PlayerClass : MonoBehaviour {
     private string Username;
     private int Lives = 2;
-    private GameObject playerObject;
+    private RoundManager RoundManager;
 
-    public PlayerClass(string _username) {
+    public PlayerClass(string _username, RoundManager _roundManager) {
         this.Username = _username;
-    }
-
-    public void SetPlayerObject(GameObject _playerGameObject) {
-        this.playerObject = _playerGameObject;
+        this.RoundManager = _roundManager;
     }
 
     public void TakeDamage() {
         if (this.Lives <= 0) return;
         this.Lives--;
+
+        RoundManager.UpdatePlayerLivesServerRPC(this.Username, this.Lives);
     }
 
     public void ResetLives() {
         this.Lives = 2;
+        RoundManager.UpdatePlayerLivesServerRPC(this.Username, this.Lives);
     }
 }

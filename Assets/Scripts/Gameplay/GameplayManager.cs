@@ -6,6 +6,7 @@ using UnityEngine;
 public class GameplayManager : MonoBehaviour {
     [SerializeField] private GameObject PlayerTemplateContainer;
     [SerializeField] private GameObject PlayerTemplate;
+    [SerializeField] private GameObject InputFieldObject;
     private List<GameObject> PlayerTemplates = new List<GameObject>();
 
     public void AddUserTemplate(string userNamesList) {
@@ -19,5 +20,9 @@ public class GameplayManager : MonoBehaviour {
             NewPlayerTemplate.SetActive(true);
             PlayerTemplates.Add(NewPlayerTemplate);
         }
+    }
+
+    public string ReturnMessageField() {
+        return InputFieldObject.GetComponent<TMP_InputField>().text;
     }
 }

@@ -24,8 +24,18 @@ public class RoundManager : NetworkBehaviour {
         AddUserTemplateClientRpc(playersEmpty);
     }
 
+    [ServerRpc]
+    public void SendMessageServerRPC(string Message) {
+        CreateMessagePromptClientRpc(Message);
+    }
+
     [ClientRpc]
     private void AddUserTemplateClientRpc(string userList) {
         GameplayManager.AddUserTemplate(userList);
+    }
+
+    [ClientRpc]
+    private void CreateMessagePromptClientRpc(string Message) {
+
     }
 }

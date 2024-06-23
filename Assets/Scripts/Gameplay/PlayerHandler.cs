@@ -24,9 +24,14 @@ public class PlayerHandler : NetworkBehaviour {
         }
     }
 
+    public string GetUserName() {
+        if (!IsOwner) return "TWENTYONECHARACTERS";
+        return Username;
+    }
+
     public void SendMessage() {
         if (!IsOwner) return;
         string Field = GameplayManager.ReturnMessageField();
-        RoundManager.SendMessageServerRPC(Field);
+        RoundManager.SendMessageServerRPC(Field, GetUserName());
     }
 }

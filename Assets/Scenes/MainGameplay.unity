@@ -973,7 +973,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.5882353}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -8302,8 +8302,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7396694474753469601}
   m_HandleRect: {fileID: 1984473749040096390}
   m_Direction: 2
-  m_Value: 0
-  m_Size: 0.96348965
+  m_Value: -0.000012662908
+  m_Size: 0.9634084
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -11766,7 +11766,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 12.049939}
+  m_AnchoredPosition: {x: 0, y: 12.050059}
   m_SizeDelta: {x: 0, y: 330.08}
   m_Pivot: {x: 0, y: 1}
 --- !u!224 &6883825288649728226
@@ -14733,6 +14733,8 @@ MonoBehaviour:
   PlayerTemplate: {fileID: 3570199884401902208}
   InputFieldObject: {fileID: 5913101972134303017}
   SendMessageObject: {fileID: 1006908353}
+  ChatboxMessageObject: {fileID: 914879363}
+  ChatboxMessageParent: {fileID: 2040783835}
 --- !u!222 &8844018837105467611
 CanvasRenderer:
   m_ObjectHideFlags: 0

@@ -25,8 +25,8 @@ public class RoundManager : NetworkBehaviour {
     }
 
     [ServerRpc]
-    public void SendMessageServerRPC(string Message) {
-        CreateMessagePromptClientRpc(Message);
+    public void SendMessageServerRPC(string Message, string Username) {
+        CreateMessagePromptClientRpc(Message, Username);
     }
 
     [ClientRpc]
@@ -35,7 +35,7 @@ public class RoundManager : NetworkBehaviour {
     }
 
     [ClientRpc]
-    private void CreateMessagePromptClientRpc(string Message) {
-
+    private void CreateMessagePromptClientRpc(string Message, string Username) {
+        GameplayManager.CreateChatMessage(Username, Message);
     }
 }

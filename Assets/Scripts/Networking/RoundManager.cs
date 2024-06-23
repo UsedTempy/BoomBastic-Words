@@ -12,13 +12,20 @@ public class RoundManager : NetworkBehaviour {
     public void AddUserToListServerRPC(string Username) {
         if (UserList.Contains(Username)) return;
         UserList.Add(Username);
-        Debug.Log(Username);
 
-        AddUserTemplateClientRpc(Username);
+        string playersEmpty = "";
+        for (int i = 0; i < UserList.Count; i++) {
+            string userName = UserList[i];
+            if (i-1 == Username.Length) {
+                playersEmpty += userName + ",";
+            } else playersEmpty += userName + ",";
+        }
+
+        AddUserTemplateClientRpc(playersEmpty);
     }
 
     [ClientRpc]
-    private void AddUserTemplateClientRpc(string Username) {
-        GameplayManager.AddUserTemplate(Username);
+    private void AddUserTemplateClientRpc(string userList) {
+        GameplayManager.AddUserTemplate(userList);
     }
 }

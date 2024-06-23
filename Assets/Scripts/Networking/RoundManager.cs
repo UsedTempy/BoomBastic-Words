@@ -16,15 +16,15 @@ public class RoundManager : NetworkBehaviour {
         string playersEmpty = "";
         for (int i = 0; i < UserList.Count; i++) {
             string userName = UserList[i];
-            if (i == Username.Length) {
+            if (i == UserList.Count-1) {
                 playersEmpty += userName;
-            } else playersEmpty += userName + ",";
+            } else playersEmpty += userName+",";
         }
 
         AddUserTemplateClientRpc(playersEmpty);
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     public void SendMessageServerRPC(string Message, string Username) {
         CreateMessagePromptClientRpc(Message, Username);
     }

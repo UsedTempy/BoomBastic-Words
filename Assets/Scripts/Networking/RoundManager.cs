@@ -17,7 +17,7 @@ public class RoundManager : NetworkBehaviour {
         for (int i = 0; i < UserList.Count; i++) {
             string userName = UserList[i];
             if (i-1 == Username.Length) {
-                playersEmpty += userName + ",";
+                playersEmpty += userName;
             } else playersEmpty += userName + ",";
         }
 

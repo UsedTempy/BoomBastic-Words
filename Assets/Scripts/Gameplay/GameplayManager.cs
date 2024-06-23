@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameplayManager : MonoBehaviour {
     [SerializeField] private GameObject PlayerTemplateContainer;
     [SerializeField] private GameObject PlayerTemplate;
     [SerializeField] private GameObject InputFieldObject;
+    [SerializeField] private GameObject SendMessageObject;
     private List<GameObject> PlayerTemplates = new List<GameObject>();
 
     public void AddUserTemplate(string userNamesList) {

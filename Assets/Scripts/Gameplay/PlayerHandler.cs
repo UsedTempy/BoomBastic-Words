@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerHandler : NetworkBehaviour {
     [SerializeField] private string Username;
@@ -16,6 +17,11 @@ public class PlayerHandler : NetworkBehaviour {
         Username = $"User_{Mathf.Floor(Random.Range(1000, 9999))}";
 
         RoundManager.AddUserToListServerRPC(Username);
+
+        GameObject SendButton = GameObject.FindGameObjectWithTag("SendButton");
+        if (SendButton) {
+            SendButton.GetComponent<Button>().onClick.AddListener(SendMessage);
+        }
     }
 
     public void SendMessage() {

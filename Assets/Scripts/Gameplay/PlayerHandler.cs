@@ -8,6 +8,7 @@ public class PlayerHandler : NetworkBehaviour {
     [SerializeField] private string Username;
     [SerializeField] private RoundManager RoundManager;
     [SerializeField] private GameplayManager GameplayManager;
+    private Dictionary<string, PlayerClass> playerClasses = new Dictionary<string, PlayerClass>();
 
     // Start is called before the first frame update
     void Start() {
@@ -15,6 +16,9 @@ public class PlayerHandler : NetworkBehaviour {
         RoundManager = FindObjectOfType<RoundManager>();
         GameplayManager = FindObjectOfType<GameplayManager>();
         Username = $"User_{Mathf.Floor(Random.Range(1000, 9999))}";
+
+        PlayerClass newPlayerClass = new PlayerClass(Username);
+        playerClasses.Add(Username, newPlayerClass);
 
         RoundManager.AddUserToListServerRPC(Username);
 

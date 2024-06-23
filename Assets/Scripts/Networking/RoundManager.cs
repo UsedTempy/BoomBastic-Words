@@ -22,6 +22,7 @@ public class RoundManager : NetworkBehaviour {
         }
 
         AddUserTemplateClientRpc(playersEmpty);
+        UpdatePlayerTemplatesClientRpc(playersEmpty);
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -37,5 +38,10 @@ public class RoundManager : NetworkBehaviour {
     [ClientRpc]
     private void CreateMessagePromptClientRpc(string Message, string Username) {
         GameplayManager.CreateChatMessage(Username, Message);
+    }
+
+    [ClientRpc]
+    private void UpdatePlayerTemplatesClientRpc(string userList) {
+        GameplayManager.UpdatePlayerTemplates(userList);
     }
 }

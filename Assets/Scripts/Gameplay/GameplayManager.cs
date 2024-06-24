@@ -23,6 +23,7 @@ public class GameplayManager : NetworkBehaviour {
 
     [Header("Gameplay Content")] 
     [SerializeField] private GameObject ArrowObject;
+    [SerializeField] private GameObject TurnPlayGameObject;
 
     [Header("Components")]
     [SerializeField] private Sprite HeartActive;
@@ -115,6 +116,8 @@ public class GameplayManager : NetworkBehaviour {
     public void HandlePlayerTurn(string Username) {
         List<Vector2> generatedPoints = GeneratePointsAround(new Vector2(0, 0), 4.2464f, PlayerIcons.Count);
         int keyIndexOf = PlayerIcons.Keys.ToList().IndexOf(Username);
+
+        TurnPlayGameObject.GetComponent<TMP_Text>().text = $"{Username}, type an English word containing:";
 
         Debug.Log($"PlayerIndex: {keyIndexOf}");
     }

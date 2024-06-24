@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
@@ -19,6 +20,9 @@ public class GameplayManager : NetworkBehaviour {
     [Header("Player Content")] 
     [SerializeField] private GameObject PlayerContentParent;
     [SerializeField] private GameObject PlayerContentTemplate;
+
+    [Header("Gameplay Content")] 
+    [SerializeField] private GameObject ArrowObject;
 
     [Header("Components")]
     [SerializeField] private Sprite HeartActive;
@@ -106,5 +110,12 @@ public class GameplayManager : NetworkBehaviour {
             NewPlayerTemplate.SetActive(true);
             PlayerIcons.Add(Username, NewPlayerTemplate);
         }
+    }
+
+    public void HandlePlayerTurn(string Username) {
+        List<Vector2> generatedPoints = GeneratePointsAround(new Vector2(0, 0), 4.2464f, PlayerIcons.Count);
+        int keyIndexOf = PlayerIcons.Keys.ToList().IndexOf(Username);
+
+        Debug.Log($"PlayerIndex: {keyIndexOf}");
     }
 }

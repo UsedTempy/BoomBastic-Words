@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class RoundManager : NetworkBehaviour {
@@ -25,6 +27,24 @@ public class RoundManager : NetworkBehaviour {
         UpdatePlayerTemplatesClientRpc(playersEmpty);
     }
 
+    private void StartGame() {
+        if (!IsHost) return;
+        bool initializedGame = true;
+
+        while (initializedGame) {
+            for (int i = 0; i < UserList.Count; i++) {
+                string Username = UserList[i];
+                SetUserTurnServerRPC(Username);
+
+                Thread.Sleep(30000);
+            }
+        }
+    }
+
+    void Start() {
+        StartGame();
+    }
+
     [ServerRpc(RequireOwnership = false)]
     public void SendMessageServerRPC(string Message, string Username) {
         CreateMessagePromptClientRpc(Message, Username);
@@ -33,6 +53,11 @@ public class RoundManager : NetworkBehaviour {
     [ServerRpc(RequireOwnership = false)]
     public void UpdatePlayerLivesServerRPC(string Username, int Lives) {
         UpdatePlayerLivesClientRpc(Username, Lives);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void SetUserTurnServerRPC(string newSelectedUser) {
+        HandleUserTurnClientRpc(newSelectedUser);
     }
 
 
@@ -54,5 +79,10 @@ public class RoundManager : NetworkBehaviour {
     [ClientRpc]
     private void UpdatePlayerLivesClientRpc(string Username, int Lives) {
         GameplayManager.UpdateLives(Username, Lives);
+    }
+
+    [ClientRpc]
+    private void HandleUserTurnClientRpc(string newSelectedUser) {
+        GameplayManager.HandlePlayerTurn(newSelectedUser);
     }
 }

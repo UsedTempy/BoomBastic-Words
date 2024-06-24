@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -9,24 +11,15 @@ public class RoundManager : NetworkBehaviour {
     [SerializeField] private List<string> UserList = new List<string>();
     [SerializeField] private GameplayManager GameplayManager;
 
-    private void StartGame() {
-        bool initializedGame = true;
-        Debug.Log("Game Started");
+    private long clockTime = 0;
+    private float turnTime = 5f;
+    private int currentPlayerIndex = 0;
 
-        while (initializedGame == true) {
-            Debug.Log("B");
-            for (int i = 0; i < UserList.Count; i++) {
-                string Username = UserList[i];
-                SetUserTurnServerRPC(Username);
-
-                Thread.Sleep(30000);
-            }
-        }
+    private long ReturnUnixTimeInSeconds() {
+        DateTime currentTime = DateTime.UtcNow;
+        return ((DateTimeOffset)currentTime).ToUnixTimeSeconds();
     }
 
-    void Start() {
-        StartGame();
-    }
 
     [ServerRpc(RequireOwnership = false)]
     public void AddUserToListServerRPC(string Username) {
@@ -85,5 +78,28 @@ public class RoundManager : NetworkBehaviour {
     [ClientRpc]
     private void HandleUserTurnClientRpc(string newSelectedUser) {
         GameplayManager.HandlePlayerTurn(newSelectedUser);
+    }
+
+
+
+
+    // -- Index >> LOOP
+    void Update() {
+        if (!IsServer) return;
+        if ((ReturnUnixTimeInSeconds() - clockTime) >= turnTime) {
+            clockTime = ReturnUnixTimeInSeconds();
+            turnTime = 5f;
+
+            try {
+                if (UserList[currentPlayerIndex] != null) {
+                    SetUserTurnServerRPC(UserList[currentPlayerIndex]);
+                }
+            } catch {
+                Debug.Log($"ERROR: {currentPlayerIndex}");
+            }
+
+            currentPlayerIndex++;
+            if (currentPlayerIndex >= UserList.Count) currentPlayerIndex = 0;
+        }
     }
 }

@@ -9,29 +9,12 @@ public class RoundManager : NetworkBehaviour {
     [SerializeField] private List<string> UserList = new List<string>();
     [SerializeField] private GameplayManager GameplayManager;
 
-
-    [ServerRpc(RequireOwnership = false)]
-    public void AddUserToListServerRPC(string Username) {
-        if (UserList.Contains(Username)) return;
-        UserList.Add(Username);
-
-        string playersEmpty = "";
-        for (int i = 0; i < UserList.Count; i++) {
-            string userName = UserList[i];
-            if (i == UserList.Count-1) {
-                playersEmpty += userName;
-            } else playersEmpty += userName+",";
-        }
-
-        AddUserTemplateClientRpc(playersEmpty);
-        UpdatePlayerTemplatesClientRpc(playersEmpty);
-    }
-
     private void StartGame() {
-        if (!IsHost) return;
         bool initializedGame = true;
+        Debug.Log("Game Started");
 
-        while (initializedGame) {
+        while (initializedGame == true) {
+            Debug.Log("B");
             for (int i = 0; i < UserList.Count; i++) {
                 string Username = UserList[i];
                 SetUserTurnServerRPC(Username);
@@ -43,6 +26,24 @@ public class RoundManager : NetworkBehaviour {
 
     void Start() {
         StartGame();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void AddUserToListServerRPC(string Username) {
+        if (UserList.Contains(Username)) return;
+        UserList.Add(Username);
+
+        string playersEmpty = "";
+        for (int i = 0; i < UserList.Count; i++) {
+            string userName = UserList[i];
+            if (i == UserList.Count - 1) {
+                playersEmpty += userName;
+            }
+            else playersEmpty += userName + ",";
+        }
+
+        AddUserTemplateClientRpc(playersEmpty);
+        UpdatePlayerTemplatesClientRpc(playersEmpty);
     }
 
     [ServerRpc(RequireOwnership = false)]

@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerClass : MonoBehaviour {
+public class PlayerClass : NetworkBehaviour {
     private string Username;
     private int Lives = 2;
     private RoundManager RoundManager;
@@ -17,7 +18,10 @@ public class PlayerClass : MonoBehaviour {
         this.Lives--;
 
         RoundManager.UpdatePlayerLivesServerRPC(this.Username, this.Lives);
-        if (this.Lives == 0) RoundManager.UserDiedServerRPC(this.Username);
+        if (this.Lives == 0) {
+            RoundManager.UserDiedServerRPC(this.Username);
+            Debug.Log("DIED");
+        }
     }
 
     public void ResetLives() {

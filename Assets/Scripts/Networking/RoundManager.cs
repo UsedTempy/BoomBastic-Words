@@ -229,9 +229,11 @@ public class RoundManager : NetworkBehaviour {
 
                 hasGivenValidAnswer = false;
 
-                if ((UserList.Count - DeadUsers.Count) == 1) {
+                Debug.Log((UserList.Count - DeadUsers.Count));
+                if ((UserList.Count - DeadUsers.Count) == 0) {
                     gameStarted = false;
                     timerGameStart = 10f;
+                    playersTurn = null;
                     ReviveAllUsersClientRpc();
 
                     string winner = "TWENTYONECHARACTERS";

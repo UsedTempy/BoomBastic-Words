@@ -133,10 +133,8 @@ public class GameplayManager : NetworkBehaviour {
     }
 
     public void HandlePlayerTurn(string Username, long TimeStarted, string RandomCharacters) {
-        foreach (var data in KeyDictioary) {
-           Destroy(data.Value);
-           KeyDictioary.Remove(data.Key);
-        }
+        foreach (var data in KeyDictioary) Destroy(data.Value);
+        KeyDictioary.Clear();
 
         List<Vector2> generatedPoints = GeneratePointsAround(new Vector2(0, 0), 4.2464f, PlayerIcons.Count);
         int keyIndexOf = PlayerIcons.Keys.ToList().IndexOf(Username);
@@ -147,13 +145,14 @@ public class GameplayManager : NetworkBehaviour {
         LeanTween.cancel(ArrowObject);
         LeanTween.rotateZ(ArrowObject, GetLookAtRotation(new Vector2(0, 0), generatedPoints[keyIndexOf]), .2f);
 
-        foreach (var Character in RandomCharacters.Split()) {
+        foreach (var Character in RandomCharacters) {
             GameObject newKeyPressedGameObject = Instantiate(KeyTemplateObject, KeyParentObject.transform);
             newKeyPressedGameObject.transform.SetSiblingIndex(2);
-            newKeyPressedGameObject.name = Character;
+            newKeyPressedGameObject.name = Character.ToString();
+            newKeyPressedGameObject.transform.Find("KeyText").GetComponent<TMP_Text>().text = Character.ToString();
             newKeyPressedGameObject.SetActive(true);
 
-            KeyDictioary.Add(Character, newKeyPressedGameObject);
+            KeyDictioary.Add(Character.ToString(), newKeyPressedGameObject);
         }
     }
 

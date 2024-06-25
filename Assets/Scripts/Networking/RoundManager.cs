@@ -189,6 +189,10 @@ public class RoundManager : NetworkBehaviour {
         GameplayManager.TakePlayerDamage(Username);
     }
 
+    [ClientRpc]
+    public void ReviveAllUsersServerRPC() {
+        GameplayManager.ReviveAllUsers();
+    }
 
     // -- Index >> LOOP
 
@@ -219,8 +223,11 @@ public class RoundManager : NetworkBehaviour {
 
                 hasGivenValidAnswer = false;
 
-                if ((UserList.Count - DeadUsers.Count) == 1) {
+                if ((UserList.Count - DeadUsers.Count) == 0) {
                     gameStarted = false;
+                    timerGameStart = 10f;
+                    DeadUsers.Clear();
+                    ReviveAllUsersServerRPC();
                     return;
                 }
 

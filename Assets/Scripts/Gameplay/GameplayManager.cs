@@ -34,6 +34,10 @@ public class GameplayManager : NetworkBehaviour {
     [SerializeField] private Sprite HeartActive;
     [SerializeField] private Sprite HeartInactive;
 
+    [Header("Round Conditions")]
+    [SerializeField] private GameObject Win;
+    [SerializeField] private GameObject Lose;
+
 
     private List<GameObject> PlayerTemplates = new List<GameObject>();
     private Dictionary<string, GameObject> PlayerIcons = new Dictionary<string, GameObject>();
@@ -273,6 +277,14 @@ public class GameplayManager : NetworkBehaviour {
         foreach (var playerHandler in FindObjectsOfType<PlayerHandler>()) {
             if (Username != playerHandler.GetUserName()) return;
             playerHandler.playerClasses[Username].TakeDamage();
+        }
+    }
+
+    public void ReviveAllUsers() {
+        foreach (var playerHandler in FindObjectsOfType<PlayerHandler>()) {
+            foreach (var playerObject in playerHandler.playerClasses) {
+                playerObject.Value.ResetLives();
+            }
         }
     }
 

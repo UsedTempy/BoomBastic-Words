@@ -5,6 +5,7 @@ using System.Linq;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
 
 public class GameplayManager : NetworkBehaviour {
@@ -36,8 +37,12 @@ public class GameplayManager : NetworkBehaviour {
 
     private List<GameObject> PlayerTemplates = new List<GameObject>();
     private Dictionary<string, GameObject> PlayerIcons = new Dictionary<string, GameObject>();
+
     private List<string> KeysPressed = new List<string>();
     private List<GameObject> KeysPressedGameObjects = new List<GameObject>();
+
+    private List<string> GivenKeys = new List<string>();
+    private List<GameObject> GivenKeysObjects = new List<GameObject>();
 
     private long TimerCounterInt = 0;
 
@@ -136,8 +141,12 @@ public class GameplayManager : NetworkBehaviour {
 
     public void HandlePlayerTurn(string Username, long TimeStarted, string RandomCharacters) {
         foreach (var objectKey in KeysPressedGameObjects) Destroy(objectKey);
+        foreach (var objectKey in GivenKeysObjects) Destroy(objectKey);
         KeysPressedGameObjects.Clear();
+        GivenKeysObjects.Clear();
+
         KeysPressed.Clear();
+        GivenKeys.Clear();
 
         List<Vector2> generatedPoints = GeneratePointsAround(new Vector2(0, 0), 4.2464f, PlayerIcons.Count);
         int keyIndexOf = PlayerIcons.Keys.ToList().IndexOf(Username);
@@ -150,14 +159,32 @@ public class GameplayManager : NetworkBehaviour {
 
         foreach (var Character in RandomCharacters) {
             GameObject newKeyPressedGameObject = Instantiate(KeyTemplateObject, KeyParentObject.transform);
-            newKeyPressedGameObject.transform.SetSiblingIndex(2);
+            newKeyPressedGameObject.transform.SetSiblingIndex(99);
             newKeyPressedGameObject.name = Character.ToString();
             newKeyPressedGameObject.transform.Find("KeyText").GetComponent<TMP_Text>().text = Character.ToString();
             newKeyPressedGameObject.SetActive(true);
 
-            KeysPressed.Add(Character.ToString());
-            KeysPressedGameObjects.Add(newKeyPressedGameObject);
+            GivenKeys.Add(Character.ToString());
+            GivenKeysObjects.Add(newKeyPressedGameObject);
         }
+    }
+
+    public void HandleKeyPressingObject(string key) {
+        GameObject newKeyPressedGameObject = Instantiate(KeyTemplateObject, KeyParentObject.transform);
+        newKeyPressedGameObject.transform.SetSiblingIndex((KeysPressed.Count - 2) + 1);
+        newKeyPressedGameObject.name = key;
+        newKeyPressedGameObject.transform.Find("KeyText").GetComponent<TMP_Text>().text = key;
+        newKeyPressedGameObject.SetActive(true);
+        newKeyPressedGameObject.GetComponent<Image>().color = new Color(1, 1, 1, 1);
+
+        KeysPressed.Add(key);
+        KeysPressedGameObjects.Add(newKeyPressedGameObject);
+    }
+
+    public void RemoveAllKeysObjects() {
+        KeysPressed.Clear();
+        foreach (var keyObject in KeysPressedGameObjects) Destroy(keyObject);
+        KeysPressedGameObjects.Clear();
     }
 
     void Update() {

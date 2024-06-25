@@ -56,13 +56,15 @@ public class RoundManager : NetworkBehaviour {
     public void AddKeysPressedForUserServerRPC(string Username, KeyCode keyPressed) {
         if (Username != playersTurn) return;
         if (keyPressed == KeyCode.Return) { // Confirm your answer (Basically check if both letters are included in the word and the word exists)
-
+            KeysPressedList.Clear();
+            RemoveAllPressedKeysClientRpc();
         } else if (keyPressed == KeyCode.Backspace) { // Remove the last character put in
             if (KeysPressedList.Count == 0) return;
             KeysPressedList.RemoveAt(KeysPressedList.Count-1);
         } else { // Any key that is pressed (Make sure it is only up to a certain amount)
             if (KeysPressedList.Count >= 15) return;
             KeysPressedList.Add(keyPressed.ToString());
+            SetPressedKeyObjectClientRpc(keyPressed.ToString());
         }
     }
 
@@ -102,7 +104,15 @@ public class RoundManager : NetworkBehaviour {
         GameplayManager.HandlePlayerTurn(newSelectedUser, TimeSinceTurnStated, RandomCharacters);
     }
 
+    [ClientRpc]
+    private void SetPressedKeyObjectClientRpc(string keyPressed) {
+        GameplayManager.HandleKeyPressingObject(keyPressed);
+    }
 
+    [ClientRpc]
+    private void RemoveAllPressedKeysClientRpc() {
+        GameplayManager.RemoveAllKeysObjects();
+    }
 
 
     // -- Index >> LOOP
@@ -113,6 +123,9 @@ public class RoundManager : NetworkBehaviour {
             turnTime = turnTimeReset;
 
             try {
+                KeysPressedList.Clear();
+                RemoveAllPressedKeysClientRpc();
+
                 if (UserList[currentPlayerIndex] != null) {
                     playersTurn = UserList[currentPlayerIndex];
                     string RandomCharacters = SearchList[Random.Range(0, SearchList.Count)];

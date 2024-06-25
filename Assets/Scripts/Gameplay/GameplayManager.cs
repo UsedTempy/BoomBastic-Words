@@ -119,6 +119,7 @@ public class GameplayManager : NetworkBehaviour {
     public static float GetLookAtRotation(Vector2 center, Vector2 target) {
         Vector2 direction = target - center;
         float angle = Mathf.Atan2(direction.y, direction.x);
+        angle = Mathf.Rad2Deg * Mathf.Repeat(angle, Mathf.PI * 2);
 
         return angle;
     }

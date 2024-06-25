@@ -10,6 +10,7 @@ using UnityEngine;
 public class RoundManager : NetworkBehaviour {
     [SerializeField] private List<string> UserList = new List<string>();
     [SerializeField] private GameplayManager GameplayManager;
+    [SerializeField] private List<string> SearchList = new List<string>();
 
     private long clockTime = 0;
 
@@ -17,6 +18,7 @@ public class RoundManager : NetworkBehaviour {
     private float turnTime = 10f;
 
     private int currentPlayerIndex = 0;
+    private string playersTurn;
 
     private long ReturnUnixTimeInSeconds() {
         DateTime currentTime = DateTime.UtcNow;
@@ -95,6 +97,7 @@ public class RoundManager : NetworkBehaviour {
 
             try {
                 if (UserList[currentPlayerIndex] != null) {
+                    playersTurn = UserList[currentPlayerIndex];
                     SetUserTurnServerRPC(UserList[currentPlayerIndex], clockTime);
                 }
             } catch {

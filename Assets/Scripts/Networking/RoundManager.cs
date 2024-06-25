@@ -21,7 +21,7 @@ public class RoundManager : NetworkBehaviour {
     private int currentPlayerIndex = 0;
     private string playersTurn;
 
-    private List<string> KeysPressedList = new List<string>();
+    [SerializeField] private List<string> KeysPressedList = new List<string>();
 
     private long ReturnUnixTimeInSeconds() {
         DateTime currentTime = DateTime.UtcNow;
@@ -54,10 +54,16 @@ public class RoundManager : NetworkBehaviour {
 
     [ServerRpc(RequireOwnership = false)]
     public void AddKeysPressedForUserServerRPC(string Username, KeyCode keyPressed) {
-        Debug.Log(Username);
-        Debug.Log(playersTurn);
-        if (Username == playersTurn) return;
-        Debug.Log("123123");
+        if (Username != playersTurn) return;
+        if (keyPressed == KeyCode.Return) { // Confirm your answer (Basically check if both letters are included in the word and the word exists)
+
+        } else if (keyPressed == KeyCode.Backspace) { // Remove the last character put in
+            if (KeysPressedList.Count == 0) return;
+            KeysPressedList.RemoveAt(KeysPressedList.Count-1);
+        } else { // Any key that is pressed (Make sure it is only up to a certain amount)
+            if (KeysPressedList.Count >= 15) return;
+            KeysPressedList.Add(keyPressed.ToString());
+        }
     }
 
     [ServerRpc(RequireOwnership = false)]

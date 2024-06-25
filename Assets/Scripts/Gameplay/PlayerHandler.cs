@@ -46,9 +46,8 @@ public class PlayerHandler : NetworkBehaviour {
         if (!IsOwner) return;
         foreach (KeyCode kcode in Enum.GetValues(typeof(KeyCode))) {
             if (Input.GetKeyDown(kcode)) {
-                if (kcode >= KeyCode.Mouse0 && kcode <= KeyCode.Mouse6) {
-                    continue; // Skip to the next iteration
-                }
+                if (kcode >= KeyCode.Mouse0 && kcode <= KeyCode.Mouse6) continue;
+                if (kcode == KeyCode.LeftAlt || kcode == KeyCode.RightAlt || kcode == KeyCode.LeftControl || kcode == KeyCode.RightControl) continue;
 
                 bool isValid = char.IsLetter((char)kcode) || kcode == KeyCode.Return || kcode == KeyCode.Backspace; // Check for letters or Enter key
 

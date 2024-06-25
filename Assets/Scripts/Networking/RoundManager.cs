@@ -12,7 +12,10 @@ public class RoundManager : NetworkBehaviour {
     [SerializeField] private GameplayManager GameplayManager;
 
     private long clockTime = 0;
-    private float turnTime = 5f;
+
+    private float turnTimeReset = 10f;
+    private float turnTime = 10f;
+
     private int currentPlayerIndex = 0;
 
     private long ReturnUnixTimeInSeconds() {
@@ -88,7 +91,7 @@ public class RoundManager : NetworkBehaviour {
         if (!IsOwnedByServer) return;
         if ((ReturnUnixTimeInSeconds() - clockTime) >= turnTime) {
             clockTime = ReturnUnixTimeInSeconds();
-            turnTime = 5f;
+            turnTime = turnTimeReset;
 
             try {
                 if (UserList[currentPlayerIndex] != null) {

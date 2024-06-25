@@ -49,7 +49,7 @@ public class RoundManager : NetworkBehaviour {
         try {
             // Parse JSON response to extract the boolean value (adjust based on your API's response format)
             Dictionary<string, bool> data = JsonUtility.FromJson<Dictionary<string, bool>>(jsonResponse);
-            apiResult = data["success"]; // Assuming the key for the boolean result is "success"
+            apiResult = data["exists"]; // Assuming the key for the boolean result is "success"
         }
         catch (System.Exception e) {
             Debug.LogError("Error parsing JSON response: " + e.Message);
@@ -57,6 +57,12 @@ public class RoundManager : NetworkBehaviour {
 
         // Use the apiResult value for your logic
         Debug.Log("API result: " + apiResult);
+        canAcceptAnswer = true;
+
+        if (apiResult == true) {
+            hasGivenValidAnswer = true;
+            turnTime = 0f;
+        }
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -93,9 +99,6 @@ public class RoundManager : NetworkBehaviour {
             RemoveAllPressedKeysClientRpc();
 
             StartCoroutine(CallApi());
-            
-            hasGivenValidAnswer = true;
-            turnTime = 0f;
         } else if (keyPressed == KeyCode.Backspace) { // Remove the last character put in
             if (KeysPressedList.Count == 0) return;
             KeysPressedList.RemoveAt(KeysPressedList.Count-1);

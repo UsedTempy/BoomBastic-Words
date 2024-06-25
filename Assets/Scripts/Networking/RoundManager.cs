@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -48,8 +49,7 @@ public class RoundManager : NetworkBehaviour {
 
         try {
             // Parse JSON response to extract the boolean value (adjust based on your API's response format)
-            Dictionary<string, bool> data = JsonUtility.FromJson<Dictionary<string, bool>>(jsonResponse);
-            apiResult = data["exists"]; // Assuming the key for the boolean result is "success"
+            apiResult = (jsonResponse == "true") ? true : false;
         }
         catch (System.Exception e) {
             Debug.LogError("Error parsing JSON response: " + e.Message);
@@ -60,7 +60,7 @@ public class RoundManager : NetworkBehaviour {
         canAcceptAnswer = true;
 
         if (apiResult == true) {
-            hasGivenValidAnswer = true;
+             hasGivenValidAnswer = true;
             turnTime = 0f;
         }
     }

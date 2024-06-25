@@ -190,7 +190,7 @@ public class RoundManager : NetworkBehaviour {
     }
 
     [ClientRpc]
-    public void ReviveAllUsersServerRPC() {
+    public void ReviveAllUsersClientRpc() {
         GameplayManager.ReviveAllUsers();
     }
 
@@ -227,7 +227,7 @@ public class RoundManager : NetworkBehaviour {
                     gameStarted = false;
                     timerGameStart = 10f;
                     DeadUsers.Clear();
-                    ReviveAllUsersServerRPC();
+                    ReviveAllUsersClientRpc();
                     return;
                 }
 

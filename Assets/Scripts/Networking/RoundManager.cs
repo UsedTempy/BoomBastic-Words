@@ -230,7 +230,7 @@ public class RoundManager : NetworkBehaviour {
                 hasGivenValidAnswer = false;
 
                 Debug.Log((UserList.Count - DeadUsers.Count));
-                if ((UserList.Count - DeadUsers.Count) == 0) {
+                if ((UserList.Count - DeadUsers.Count) == 1) {
                     gameStarted = false;
                     timerGameStart = 10f;
                     playersTurn = null;

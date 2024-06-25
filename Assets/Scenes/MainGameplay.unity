@@ -1236,7 +1236,7 @@ MonoBehaviour:
   - JI
   - EVO
   - PA
-  - EED
+  - ED
   - ME
   - VA
   - DE
@@ -8995,8 +8995,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7396694474753469601}
   m_HandleRect: {fileID: 1984473749040096390}
   m_Direction: 2
-  m_Value: -0.000053184216
-  m_Size: 0.96348494
+  m_Value: 0
+  m_Size: 0.9634849
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -12459,7 +12459,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 12.050591}
+  m_AnchoredPosition: {x: 0, y: 12.04995}
   m_SizeDelta: {x: 0, y: 330.08}
   m_Pivot: {x: 0, y: 1}
 --- !u!224 &6883825288649728226
@@ -15443,6 +15443,7 @@ MonoBehaviour:
   KeyParentObject: {fileID: 484787989}
   HeartActive: {fileID: 21300000, guid: 55517fa2594ff1a4f85c175f830ed9da, type: 3}
   HeartInactive: {fileID: 21300000, guid: 9154bcbbbd88d0947b1e1f8b0ec0c2f1, type: 3}
+  GivenKeysObjects: []
 --- !u!222 &8844018837105467611
 CanvasRenderer:
   m_ObjectHideFlags: 0

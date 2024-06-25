@@ -20,6 +20,7 @@ public class RoundManager : NetworkBehaviour {
 
     private int currentPlayerIndex = 0;
     private string playersTurn;
+    private bool hasGivenValidAnswer = false;
 
     [SerializeField] private List<string> KeysPressedList = new List<string>();
 
@@ -120,6 +121,11 @@ public class RoundManager : NetworkBehaviour {
         GameplayManager.RemoveOneKeyObject();
     }
 
+    [ClientRpc]
+    private void DamagePlayerClientRpc(string Username) {
+        GameplayManager.TakePlayerDamage(Username);
+    }
+
 
     // -- Index >> LOOP
     void Update() {
@@ -131,6 +137,13 @@ public class RoundManager : NetworkBehaviour {
             try {
                 KeysPressedList.Clear();
                 RemoveAllPressedKeysClientRpc();
+
+                if (UserList.Contains(playersTurn) && !hasGivenValidAnswer) {
+                    // Deal Damage
+                    DamagePlayerClientRpc(playersTurn);
+                }
+
+                hasGivenValidAnswer = false;
 
                 if (UserList[currentPlayerIndex] != null) {
                     playersTurn = UserList[currentPlayerIndex];

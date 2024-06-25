@@ -10,7 +10,7 @@ public class PlayerHandler : NetworkBehaviour {
     [SerializeField] private string Username;
     [SerializeField] private RoundManager RoundManager;
     [SerializeField] private GameplayManager GameplayManager;
-    private Dictionary<string, PlayerClass> playerClasses = new Dictionary<string, PlayerClass>();
+    public Dictionary<string, PlayerClass> playerClasses = new Dictionary<string, PlayerClass>();
 
     // Start is called before the first frame update
     void Start() {

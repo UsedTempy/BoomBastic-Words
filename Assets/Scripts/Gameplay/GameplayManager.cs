@@ -269,6 +269,13 @@ public class GameplayManager : NetworkBehaviour {
         KeysPressedGameObjects.RemoveAt(intKeyToRemove);
     }
 
+    public void TakePlayerDamage(string Username) {
+        foreach (var playerHandler in FindObjectsOfType<PlayerHandler>()) {
+            if (Username != playerHandler.GetUserName()) return;
+            playerHandler.playerClasses[Username].TakeDamage();
+        }
+    }
+
     void Update() {
        float timerText = Math.Clamp(10 - (ReturnUnixTimeInSeconds() - TimerCounterInt), 0f, 10f);
        TimerTextObject.GetComponent<TMP_Text>().text = timerText.ToString();

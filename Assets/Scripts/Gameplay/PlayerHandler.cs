@@ -45,9 +45,16 @@ public class PlayerHandler : NetworkBehaviour {
     void Update() {
         if (!IsOwner) return;
         foreach (KeyCode kcode in Enum.GetValues(typeof(KeyCode))) {
-            if (char.IsLetterOrDigit((char)kcode)) {
-                Debug.Log(kcode.ToString());
-                //RoundManager.AddKeysPressedForUserServerRPC(GetUserName(), kcode);
+            if (Input.GetKeyDown(kcode)) {
+                if (kcode >= KeyCode.Mouse0 && kcode <= KeyCode.Mouse6) {
+                    continue; // Skip to the next iteration
+                }
+
+                bool isValid = char.IsLetter((char)kcode) || kcode == KeyCode.Return || kcode == KeyCode.Backspace; // Check for letters or Enter key
+
+                if (isValid) {
+                    RoundManager.AddKeysPressedForUserServerRPC(GetUserName(), kcode);
+                }
             }
         }
     }

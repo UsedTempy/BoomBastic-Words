@@ -54,9 +54,10 @@ public class RoundManager : NetworkBehaviour {
 
     [ServerRpc(RequireOwnership = false)]
     public void AddKeysPressedForUserServerRPC(string Username, KeyCode keyPressed) {
+        Debug.Log(Username);
+        Debug.Log(playersTurn);
         if (Username == playersTurn) return;
-
-
+        Debug.Log("123123");
     }
 
     [ServerRpc(RequireOwnership = false)]

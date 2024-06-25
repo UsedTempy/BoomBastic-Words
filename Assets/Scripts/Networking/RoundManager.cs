@@ -197,7 +197,7 @@ public class RoundManager : NetworkBehaviour {
 
     [ClientRpc]
     public void IntermissionTimeAndStateClientRpc(string winner) {
-        GameplayManager.ReviveAllUsers();
+        GameplayManager.HandleIntermission(winner);
     }
 
     // -- Index >> LOOP
@@ -229,7 +229,7 @@ public class RoundManager : NetworkBehaviour {
 
                 hasGivenValidAnswer = false;
 
-                if ((UserList.Count - DeadUsers.Count) == 0) {
+                if ((UserList.Count - DeadUsers.Count) == 1) {
                     gameStarted = false;
                     timerGameStart = 10f;
                     ReviveAllUsersClientRpc();

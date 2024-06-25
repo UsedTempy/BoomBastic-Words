@@ -304,8 +304,17 @@ public class GameplayManager : NetworkBehaviour {
         }
     }
 
-    public void HandleIntermission() {
+    IEnumerator handleIntermissionAwait(string winner) {
+        Win.SetActive(true);
+        yield return new WaitForSeconds(5);
+        Win.SetActive(false);
         LoadingScreenElement.SetActive(true);
+        yield return new WaitForSeconds(5);
+        LoadingScreenElement.SetActive(false);
+    }
+
+    public void HandleIntermission(string winner) {
+        StartCoroutine(handleIntermissionAwait(winner));
     }
 
     void Update() {

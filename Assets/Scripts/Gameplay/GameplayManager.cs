@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +25,8 @@ public class GameplayManager : NetworkBehaviour {
     [Header("Gameplay Content")] 
     [SerializeField] private GameObject ArrowObject;
     [SerializeField] private GameObject TurnPlayGameObject;
-
+    [SerializeField] private GameObject TimerTextObject;
+ 
     [Header("Components")]
     [SerializeField] private Sprite HeartActive;
     [SerializeField] private Sprite HeartInactive;
@@ -32,6 +34,7 @@ public class GameplayManager : NetworkBehaviour {
 
     private List<GameObject> PlayerTemplates = new List<GameObject>();
     private Dictionary<string, GameObject> PlayerIcons = new Dictionary<string, GameObject>();
+    private long TimerCounterInt = 0;
 
     public void AddUserTemplate(string userNamesList) {
         foreach (var playerTemplate in PlayerTemplates) {
@@ -113,12 +116,31 @@ public class GameplayManager : NetworkBehaviour {
         }
     }
 
-    public void HandlePlayerTurn(string Username) {
+    public static float GetLookAtRotation(Vector2 center, Vector2 target) {
+        Vector2 direction = target - center;
+        float angle = Mathf.Atan2(direction.y, direction.x);
+
+        return angle;
+    }
+
+    private long ReturnUnixTimeInSeconds() {
+        DateTime currentTime = DateTime.UtcNow;
+        return ((DateTimeOffset)currentTime).ToUnixTimeSeconds();
+    }
+
+    public void HandlePlayerTurn(string Username, long TimeStarted) {
         List<Vector2> generatedPoints = GeneratePointsAround(new Vector2(0, 0), 4.2464f, PlayerIcons.Count);
         int keyIndexOf = PlayerIcons.Keys.ToList().IndexOf(Username);
 
         TurnPlayGameObject.GetComponent<TMP_Text>().text = $"{Username}, type an English word containing:";
+        TimerCounterInt = TimeStarted;
 
-        Debug.Log($"PlayerIndex: {keyIndexOf}");
+        LeanTween.cancel(ArrowObject);
+        LeanTween.rotateZ(ArrowObject, GetLookAtRotation(new Vector2(0, 0), generatedPoints[keyIndexOf]), .2f);
+    }
+
+    void Update() {
+       float timerText = Math.Clamp(10 - (ReturnUnixTimeInSeconds() - TimerCounterInt), 0f, 10f);
+       TimerTextObject.GetComponent<TMP_Text>().text = timerText.ToString();
     }
 }

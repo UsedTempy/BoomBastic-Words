@@ -50,8 +50,8 @@ public class RoundManager : NetworkBehaviour {
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void SetUserTurnServerRPC(string newSelectedUser) {
-        HandleUserTurnClientRpc(newSelectedUser);
+    public void SetUserTurnServerRPC(string newSelectedUser, long TimeSinceTurnStated) {
+        HandleUserTurnClientRpc(newSelectedUser, TimeSinceTurnStated);
     }
 
 
@@ -76,8 +76,8 @@ public class RoundManager : NetworkBehaviour {
     }
 
     [ClientRpc]
-    private void HandleUserTurnClientRpc(string newSelectedUser) {
-        GameplayManager.HandlePlayerTurn(newSelectedUser);
+    private void HandleUserTurnClientRpc(string newSelectedUser, long TimeSinceTurnStated) {
+        GameplayManager.HandlePlayerTurn(newSelectedUser, TimeSinceTurnStated);
     }
 
 
@@ -85,14 +85,14 @@ public class RoundManager : NetworkBehaviour {
 
     // -- Index >> LOOP
     void Update() {
-        if (!IsServer) return;
+        if (!IsOwnedByServer) return;
         if ((ReturnUnixTimeInSeconds() - clockTime) >= turnTime) {
             clockTime = ReturnUnixTimeInSeconds();
             turnTime = 5f;
 
             try {
                 if (UserList[currentPlayerIndex] != null) {
-                    SetUserTurnServerRPC(UserList[currentPlayerIndex]);
+                    SetUserTurnServerRPC(UserList[currentPlayerIndex], clockTime);
                 }
             } catch {
                 Debug.Log($"ERROR: {currentPlayerIndex}");

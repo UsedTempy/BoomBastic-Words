@@ -48,6 +48,8 @@ public class PlayerHandler : NetworkBehaviour {
             if (Input.GetKeyDown(kcode)) {
                 if (kcode >= KeyCode.Mouse0 && kcode <= KeyCode.Mouse6) continue;
                 if (kcode == KeyCode.LeftAlt || kcode == KeyCode.RightAlt || kcode == KeyCode.LeftControl || kcode == KeyCode.RightControl) continue;
+                if (kcode == KeyCode.LeftApple || kcode == KeyCode.RightApple || kcode == KeyCode.LeftWindows || kcode == KeyCode.RightWindows) continue;
+                if (kcode == KeyCode.UpArrow || kcode == KeyCode.LeftArrow || kcode == KeyCode.RightArrow || kcode == KeyCode.DownArrow) continue;
 
                 bool isValid = char.IsLetter((char)kcode) || kcode == KeyCode.Return || kcode == KeyCode.Backspace; // Check for letters or Enter key
 

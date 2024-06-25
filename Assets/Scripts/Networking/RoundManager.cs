@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class RoundManager : NetworkBehaviour {
     [SerializeField] private List<string> UserList = new List<string>();
@@ -55,8 +56,8 @@ public class RoundManager : NetworkBehaviour {
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void SetUserTurnServerRPC(string newSelectedUser, long TimeSinceTurnStated) {
-        HandleUserTurnClientRpc(newSelectedUser, TimeSinceTurnStated);
+    public void SetUserTurnServerRPC(string newSelectedUser, long TimeSinceTurnStated, string RandomCharacters) {
+        HandleUserTurnClientRpc(newSelectedUser, TimeSinceTurnStated, RandomCharacters);
     }
 
 
@@ -81,8 +82,8 @@ public class RoundManager : NetworkBehaviour {
     }
 
     [ClientRpc]
-    private void HandleUserTurnClientRpc(string newSelectedUser, long TimeSinceTurnStated) {
-        GameplayManager.HandlePlayerTurn(newSelectedUser, TimeSinceTurnStated);
+    private void HandleUserTurnClientRpc(string newSelectedUser, long TimeSinceTurnStated, string RandomCharacters) {
+        GameplayManager.HandlePlayerTurn(newSelectedUser, TimeSinceTurnStated, RandomCharacters);
     }
 
 
@@ -98,7 +99,8 @@ public class RoundManager : NetworkBehaviour {
             try {
                 if (UserList[currentPlayerIndex] != null) {
                     playersTurn = UserList[currentPlayerIndex];
-                    SetUserTurnServerRPC(UserList[currentPlayerIndex], clockTime);
+                    string RandomCharacters = SearchList[Random.Range(0, SearchList.Count)];
+                    SetUserTurnServerRPC(UserList[currentPlayerIndex], clockTime, RandomCharacters);
                 }
             } catch {
                 Debug.Log($"ERROR: {currentPlayerIndex}");

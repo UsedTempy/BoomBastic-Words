@@ -129,7 +129,7 @@ public class GameplayManager : NetworkBehaviour {
         return ((DateTimeOffset)currentTime).ToUnixTimeSeconds();
     }
 
-    public void HandlePlayerTurn(string Username, long TimeStarted) {
+    public void HandlePlayerTurn(string Username, long TimeStarted, string RandomCharacters) {
         List<Vector2> generatedPoints = GeneratePointsAround(new Vector2(0, 0), 4.2464f, PlayerIcons.Count);
         int keyIndexOf = PlayerIcons.Keys.ToList().IndexOf(Username);
 
@@ -138,6 +138,8 @@ public class GameplayManager : NetworkBehaviour {
 
         LeanTween.cancel(ArrowObject);
         LeanTween.rotateZ(ArrowObject, GetLookAtRotation(new Vector2(0, 0), generatedPoints[keyIndexOf]), .2f);
+
+        Debug.Log(RandomCharacters);
     }
 
     void Update() {

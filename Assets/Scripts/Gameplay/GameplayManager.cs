@@ -36,7 +36,10 @@ public class GameplayManager : NetworkBehaviour {
 
     private List<GameObject> PlayerTemplates = new List<GameObject>();
     private Dictionary<string, GameObject> PlayerIcons = new Dictionary<string, GameObject>();
-    private Dictionary<string, GameObject> KeyDictioary = new Dictionary<string, GameObject>();
+    //private Dictionary<string, GameObject> KeyDictioary = new Dictionary<string, GameObject>();
+    private List<string> KeysPressed = new List<string>();
+    private List<GameObject> KeysPressedGameObjects = new List<GameObject>();
+
     private long TimerCounterInt = 0;
 
     public void AddUserTemplate(string userNamesList) {
@@ -133,8 +136,9 @@ public class GameplayManager : NetworkBehaviour {
     }
 
     public void HandlePlayerTurn(string Username, long TimeStarted, string RandomCharacters) {
-        foreach (var data in KeyDictioary) Destroy(data.Value);
-        KeyDictioary.Clear();
+        foreach (var objectKey in KeysPressedGameObjects) Destroy(objectKey);
+        KeysPressedGameObjects.Clear();
+        KeysPressed.Clear();
 
         List<Vector2> generatedPoints = GeneratePointsAround(new Vector2(0, 0), 4.2464f, PlayerIcons.Count);
         int keyIndexOf = PlayerIcons.Keys.ToList().IndexOf(Username);
@@ -152,7 +156,8 @@ public class GameplayManager : NetworkBehaviour {
             newKeyPressedGameObject.transform.Find("KeyText").GetComponent<TMP_Text>().text = Character.ToString();
             newKeyPressedGameObject.SetActive(true);
 
-            KeyDictioary.Add(Character.ToString(), newKeyPressedGameObject);
+            KeysPressed.Add(Character.ToString());
+            KeysPressedGameObjects.Add(newKeyPressedGameObject);
         }
     }
 

@@ -98,9 +98,9 @@ public class RoundManager : NetworkBehaviour {
 
             try {
                 if (UserList[currentPlayerIndex] != null) {
-                    //playersTurn = UserList[currentPlayerIndex];
-                    //string RandomCharacters = SearchList[Random.Range(0, SearchList.Count)] ?? "aa";
-                    SetUserTurnServerRPC(UserList[currentPlayerIndex], ReturnUnixTimeInSeconds(), "BB");
+                    playersTurn = UserList[currentPlayerIndex];
+                    string RandomCharacters = SearchList[Random.Range(0, SearchList.Count)];
+                    SetUserTurnServerRPC(UserList[currentPlayerIndex], ReturnUnixTimeInSeconds(), RandomCharacters);
                 }
             } catch {
                 Debug.Log($"ERROR: {currentPlayerIndex}");

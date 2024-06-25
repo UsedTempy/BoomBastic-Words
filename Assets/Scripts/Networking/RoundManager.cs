@@ -60,6 +60,7 @@ public class RoundManager : NetworkBehaviour {
             KeysPressedList.Clear();
             RemoveAllPressedKeysClientRpc();
             hasGivenValidAnswer = true;
+            turnTime = 0f;
         } else if (keyPressed == KeyCode.Backspace) { // Remove the last character put in
             if (KeysPressedList.Count == 0) return;
             KeysPressedList.RemoveAt(KeysPressedList.Count-1);

@@ -290,6 +290,7 @@ public class GameplayManager : NetworkBehaviour {
     }
 
     public void TakePlayerDamage(string Username) {
+        if (!IsOwner) return;
         foreach (var playerHandler in FindObjectsOfType<PlayerHandler>()) {
             if (Username != playerHandler.GetUserName()) return;
             playerHandler.playerClasses[Username].TakeDamage();
@@ -297,6 +298,7 @@ public class GameplayManager : NetworkBehaviour {
     }
 
     public void ReviveAllUsers() {
+        if (!IsOwner) return;
         foreach (var playerHandler in FindObjectsOfType<PlayerHandler>()) {
             foreach (var playerObject in playerHandler.playerClasses) {
                 playerObject.Value.ResetLives();

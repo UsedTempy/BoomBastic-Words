@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerClass : NetworkBehaviour {
+public class PlayerClass : MonoBehaviour {
     private string Username;
     private int Lives = 2;
     private RoundManager RoundManager;

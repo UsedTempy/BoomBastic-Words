@@ -17,6 +17,7 @@ public class PlayerClass : MonoBehaviour {
         this.Lives--;
 
         RoundManager.UpdatePlayerLivesServerRPC(this.Username, this.Lives);
+        if (this.Lives == 0) RoundManager.UserDiedServerRPC(this.Username);
     }
 
     public void ResetLives() {

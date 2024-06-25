@@ -16,7 +16,8 @@ public class RoundManager : NetworkBehaviour {
     [SerializeField] private List<string> UserList = new List<string>();
     [SerializeField] private GameplayManager GameplayManager;
     [SerializeField] private List<string> SearchList = new List<string>();
-
+    [SerializeField] private List<string> DeadUsers = new List<string>();
+ 
     private long clockTime = 0;
     [SerializeField] private bool gameStarted = false;
     private float timerGameStart = 10f;
@@ -104,6 +105,11 @@ public class RoundManager : NetworkBehaviour {
     [ServerRpc(RequireOwnership = false)]
     public void SendMessageServerRPC(string Message, string Username) {
         CreateMessagePromptClientRpc(Message, Username);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void UserDiedServerRPC(string Username) {
+        DeadUsers.Add(Username);
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -213,8 +219,14 @@ public class RoundManager : NetworkBehaviour {
 
                 hasGivenValidAnswer = false;
 
+                if ((UserList.Count - DeadUsers.Count) == 1) {
+                    gameStarted = false;
+                    return;
+                }
+
                 if (UserList[currentPlayerIndex] != null) {
                     playersTurn = UserList[currentPlayerIndex];
+                    if (DeadUsers.Contains(playersTurn)) return;
 
                     string RandomCharacters = SearchList[Random.Range(0, SearchList.Count)];
                     givenRandomLetters = RandomCharacters;

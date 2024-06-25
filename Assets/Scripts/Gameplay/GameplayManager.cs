@@ -42,9 +42,14 @@ public class GameplayManager : NetworkBehaviour {
     private List<GameObject> KeysPressedGameObjects = new List<GameObject>();
 
     private List<string> GivenKeys = new List<string>();
-    private List<GameObject> GivenKeysObjects = new List<GameObject>();
+    [SerializeField] private List<GameObject> GivenKeysObjects = new List<GameObject>();
+
+    //private List<string> ForcedUsedKey = new List<string>();
+    private Dictionary<string, int> ForcedUsedKey = new Dictionary<string, int>();
+    private int ForcedKeysUsed = 0;
 
     private long TimerCounterInt = 0;
+    private int forcedCharactersUses = 0;
 
     public void AddUserTemplate(string userNamesList) {
         foreach (var playerTemplate in PlayerTemplates) {
@@ -139,14 +144,38 @@ public class GameplayManager : NetworkBehaviour {
         return ((DateTimeOffset)currentTime).ToUnixTimeSeconds();
     }
 
+    private void UpdateKeyObject(GameObject newKeyPressedGameObject, string keyType) {
+        if (keyType == "Normal") {
+            newKeyPressedGameObject.GetComponent<Image>().color = new Color(1, 1, 1, 1);
+        }
+        else if (keyType == "Blurred") {
+            newKeyPressedGameObject.GetComponent<Image>().color = new Color(1, 1, 1, .115f);
+        }
+        else if (keyType == "Highlighted") {
+            newKeyPressedGameObject.GetComponent<Image>().color = new Color(0.1415093f, 0.5647725f, 1, 1);
+        }
+        else {
+            newKeyPressedGameObject.GetComponent<Image>().color = new Color(1, 1, 1, 1);
+        }
+    }
+
+    private GameObject CreateKeyObject() {
+        GameObject newKeyPressedGameObject = Instantiate(KeyTemplateObject, KeyParentObject.transform);
+        newKeyPressedGameObject.transform.SetSiblingIndex(99);
+        newKeyPressedGameObject.SetActive(true);
+
+        return newKeyPressedGameObject;
+    }
+
     public void HandlePlayerTurn(string Username, long TimeStarted, string RandomCharacters) {
         foreach (var objectKey in KeysPressedGameObjects) Destroy(objectKey);
-        foreach (var objectKey in GivenKeysObjects) Destroy(objectKey);
+        foreach (var objectKey2 in GivenKeysObjects) Destroy(objectKey2);
         KeysPressedGameObjects.Clear();
         GivenKeysObjects.Clear();
 
         KeysPressed.Clear();
         GivenKeys.Clear();
+        ForcedUsedKey.Clear();
 
         List<Vector2> generatedPoints = GeneratePointsAround(new Vector2(0, 0), 4.2464f, PlayerIcons.Count);
         int keyIndexOf = PlayerIcons.Keys.ToList().IndexOf(Username);
@@ -156,35 +185,88 @@ public class GameplayManager : NetworkBehaviour {
 
         LeanTween.cancel(ArrowObject);
         LeanTween.rotateZ(ArrowObject, GetLookAtRotation(new Vector2(0, 0), generatedPoints[keyIndexOf]), .2f);
+        
+        foreach (var Character in RandomCharacters) GivenKeys.Add(Character.ToString());
+        for (int i = 0; i < GivenKeys.Count; i++) {
+            GameObject newKeyPressedGameObject = CreateKeyObject();
+            newKeyPressedGameObject.name = GivenKeys[i];
+            newKeyPressedGameObject.transform.Find("KeyText").GetComponent<TMP_Text>().text = GivenKeys[i];
+            newKeyPressedGameObject.transform.SetSiblingIndex(999);
 
-        foreach (var Character in RandomCharacters) {
-            GameObject newKeyPressedGameObject = Instantiate(KeyTemplateObject, KeyParentObject.transform);
-            newKeyPressedGameObject.transform.SetSiblingIndex(99);
-            newKeyPressedGameObject.name = Character.ToString();
-            newKeyPressedGameObject.transform.Find("KeyText").GetComponent<TMP_Text>().text = Character.ToString();
-            newKeyPressedGameObject.SetActive(true);
-
-            GivenKeys.Add(Character.ToString());
+            UpdateKeyObject(newKeyPressedGameObject, "Blurred");
             GivenKeysObjects.Add(newKeyPressedGameObject);
+
+            if (ForcedUsedKey.ContainsKey(GivenKeys[i])) {
+                newKeyPressedGameObject.SetActive(false);
+            } else newKeyPressedGameObject.SetActive(true);
         }
     }
 
-    public void HandleKeyPressingObject(string key) {
-        GameObject newKeyPressedGameObject = Instantiate(KeyTemplateObject, KeyParentObject.transform);
-        newKeyPressedGameObject.transform.SetSiblingIndex((KeysPressed.Count - 2) + 1);
-        newKeyPressedGameObject.name = key;
-        newKeyPressedGameObject.transform.Find("KeyText").GetComponent<TMP_Text>().text = key;
-        newKeyPressedGameObject.SetActive(true);
-        newKeyPressedGameObject.GetComponent<Image>().color = new Color(1, 1, 1, 1);
+    public void HandleKeyPressingObject(string key, bool isRefresh) {
+        foreach (var objectKey in KeysPressedGameObjects) Destroy(objectKey);
+        foreach (var objectKey in GivenKeysObjects) Destroy(objectKey);
+        KeysPressedGameObjects.Clear();
+        GivenKeysObjects.Clear();
 
-        KeysPressed.Add(key);
-        KeysPressedGameObjects.Add(newKeyPressedGameObject);
+        if (!isRefresh) {
+            KeysPressed.Add(key);
+        }
+
+        for (int i = 0; i < KeysPressed.Count; i++) {
+            GameObject newKeyPressedGameObject = CreateKeyObject();
+            newKeyPressedGameObject.name = KeysPressed[i];
+            newKeyPressedGameObject.transform.Find("KeyText").GetComponent<TMP_Text>().text = KeysPressed[i];
+
+            if (GivenKeys.Contains(KeysPressed[i]) && GivenKeys.IndexOf(KeysPressed[i]) == ForcedUsedKey.Count) {
+                ForcedUsedKey.Add(KeysPressed[i], i);
+            } else UpdateKeyObject(newKeyPressedGameObject, "Normal");
+
+            KeysPressedGameObjects.Add(newKeyPressedGameObject);
+        }
+
+        foreach (var forcedKeyData in ForcedUsedKey) {
+            UpdateKeyObject(KeysPressedGameObjects[forcedKeyData.Value], "Highlighted");
+        }
+
+        for (int i = 0; i < GivenKeys.Count; i++) {
+            GameObject newKeyPressedGameObject = CreateKeyObject();
+            newKeyPressedGameObject.name = GivenKeys[i];
+            newKeyPressedGameObject.transform.Find("KeyText").GetComponent<TMP_Text>().text = GivenKeys[i];
+            newKeyPressedGameObject.transform.SetSiblingIndex(999);
+
+            UpdateKeyObject(newKeyPressedGameObject, "Blurred");
+            GivenKeysObjects.Add(newKeyPressedGameObject);
+
+            if (ForcedUsedKey.ContainsKey(GivenKeys[i])) {
+                newKeyPressedGameObject.SetActive(false);
+            }
+        }
     }
 
     public void RemoveAllKeysObjects() {
         KeysPressed.Clear();
+        ForcedUsedKey.Clear();
         foreach (var keyObject in KeysPressedGameObjects) Destroy(keyObject);
         KeysPressedGameObjects.Clear();
+        foreach (var objectKey in GivenKeysObjects) objectKey.SetActive(true);
+    }
+
+    public void RemoveOneKeyObject() {
+        int intKeyToRemove = KeysPressed.Count-1;
+        if (ForcedUsedKey.ContainsKey(KeysPressed[intKeyToRemove])) {
+            ForcedUsedKey.Remove(KeysPressed[intKeyToRemove]);
+        }
+
+        foreach (var givenKeyObject in GivenKeysObjects) {
+            if (givenKeyObject.name == KeysPressed[intKeyToRemove]) {
+                givenKeyObject.SetActive(true);
+            }
+        }
+
+        KeysPressed.RemoveAt(intKeyToRemove);
+
+        Destroy(KeysPressedGameObjects[intKeyToRemove]);
+        KeysPressedGameObjects.RemoveAt(intKeyToRemove);
     }
 
     void Update() {

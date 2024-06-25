@@ -1309,6 +1309,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   UserList: []
   GameplayManager: {fileID: 0}
+  SearchList: []
+  KeysPressedList: []
 --- !u!114 &683849685019313131
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -61,6 +61,7 @@ public class RoundManager : NetworkBehaviour {
         } else if (keyPressed == KeyCode.Backspace) { // Remove the last character put in
             if (KeysPressedList.Count == 0) return;
             KeysPressedList.RemoveAt(KeysPressedList.Count-1);
+            RemoveOnePressedKeyClientRpc();
         } else { // Any key that is pressed (Make sure it is only up to a certain amount)
             if (KeysPressedList.Count >= 15) return;
             KeysPressedList.Add(keyPressed.ToString());
@@ -106,12 +107,17 @@ public class RoundManager : NetworkBehaviour {
 
     [ClientRpc]
     private void SetPressedKeyObjectClientRpc(string keyPressed) {
-        GameplayManager.HandleKeyPressingObject(keyPressed);
+        GameplayManager.HandleKeyPressingObject(keyPressed, false);
     }
 
     [ClientRpc]
     private void RemoveAllPressedKeysClientRpc() {
         GameplayManager.RemoveAllKeysObjects();
+    }
+
+    [ClientRpc]
+    private void RemoveOnePressedKeyClientRpc() {
+        GameplayManager.RemoveOneKeyObject();
     }
 
 

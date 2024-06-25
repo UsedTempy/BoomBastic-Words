@@ -59,6 +59,7 @@ public class RoundManager : NetworkBehaviour {
         if (keyPressed == KeyCode.Return) { // Confirm your answer (Basically check if both letters are included in the word and the word exists)
             KeysPressedList.Clear();
             RemoveAllPressedKeysClientRpc();
+            hasGivenValidAnswer = true;
         } else if (keyPressed == KeyCode.Backspace) { // Remove the last character put in
             if (KeysPressedList.Count == 0) return;
             KeysPressedList.RemoveAt(KeysPressedList.Count-1);

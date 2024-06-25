@@ -213,7 +213,7 @@ public class RoundManager : NetworkBehaviour {
         }
 
         if (!gameStarted) return;
-        if (!IsOwnedByServer) return;
+        if (!IsOwner) return;
         if ((ReturnUnixTimeInSeconds() - clockTime) >= turnTime) {
             clockTime = ReturnUnixTimeInSeconds();
             turnTime = turnTimeReset;

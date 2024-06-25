@@ -16,12 +16,12 @@ public class PlayerClass : MonoBehaviour {
         if (this.Lives <= 0) return;
         this.Lives--;
 
-        RoundManager.UpdatePlayerLivesServerRPC(this.Username, this.Lives);
+        //RoundManager.UpdatePlayerLivesServerRPC(this.Username, this.Lives);
         if (this.Lives == 0) RoundManager.UserDiedServerRPC(this.Username);
     }
 
     public void ResetLives() {
         this.Lives = 2;
-        RoundManager.UpdatePlayerLivesServerRPC(this.Username, this.Lives);
+        //RoundManager.UpdatePlayerLivesServerRPC(this.Username, this.Lives);
     }
 }

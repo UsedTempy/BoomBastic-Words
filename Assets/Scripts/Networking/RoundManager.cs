@@ -21,6 +21,8 @@ public class RoundManager : NetworkBehaviour {
     private int currentPlayerIndex = 0;
     private string playersTurn;
 
+    private List<string> KeysPressedList = new List<string>();
+
     private long ReturnUnixTimeInSeconds() {
         DateTime currentTime = DateTime.UtcNow;
         return ((DateTimeOffset)currentTime).ToUnixTimeSeconds();
@@ -48,6 +50,13 @@ public class RoundManager : NetworkBehaviour {
     [ServerRpc(RequireOwnership = false)]
     public void SendMessageServerRPC(string Message, string Username) {
         CreateMessagePromptClientRpc(Message, Username);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void AddKeysPressedForUserServerRPC(string Username, KeyCode keyPressed) {
+        if (Username == playersTurn) return;
+
+
     }
 
     [ServerRpc(RequireOwnership = false)]

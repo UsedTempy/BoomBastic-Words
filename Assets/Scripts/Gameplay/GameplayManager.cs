@@ -36,7 +36,6 @@ public class GameplayManager : NetworkBehaviour {
 
     private List<GameObject> PlayerTemplates = new List<GameObject>();
     private Dictionary<string, GameObject> PlayerIcons = new Dictionary<string, GameObject>();
-    //private Dictionary<string, GameObject> KeyDictioary = new Dictionary<string, GameObject>();
     private List<string> KeysPressed = new List<string>();
     private List<GameObject> KeysPressedGameObjects = new List<GameObject>();
 

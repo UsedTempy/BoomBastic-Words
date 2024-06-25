@@ -1,8 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class PlayerHandler : NetworkBehaviour {
     [SerializeField] private string Username;
@@ -38,5 +40,15 @@ public class PlayerHandler : NetworkBehaviour {
         if (!IsOwner) return;
         string Field = GameplayManager.ReturnMessageField();
         RoundManager.SendMessageServerRPC(Field, GetUserName());
+    }
+
+    void Update() {
+        if (!IsOwner) return;
+        foreach (KeyCode kcode in Enum.GetValues(typeof(KeyCode))) {
+            if (char.IsLetterOrDigit((char)kcode)) {
+                Debug.Log(kcode.ToString());
+                //RoundManager.AddKeysPressedForUserServerRPC(GetUserName(), kcode);
+            }
+        }
     }
 }

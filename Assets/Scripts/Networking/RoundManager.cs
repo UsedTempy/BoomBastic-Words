@@ -1,11 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Networking;
 using Random = UnityEngine.Random;
 
 public class RoundManager : NetworkBehaviour {
@@ -21,6 +24,8 @@ public class RoundManager : NetworkBehaviour {
     private int currentPlayerIndex = 0;
     private string playersTurn;
     private bool hasGivenValidAnswer = false;
+    private string givenRandomLetters;
+    private bool canAcceptAnswer = true;
 
     [SerializeField] private List<string> KeysPressedList = new List<string>();
 
@@ -29,6 +34,30 @@ public class RoundManager : NetworkBehaviour {
         return ((DateTimeOffset)currentTime).ToUnixTimeSeconds();
     }
 
+    public IEnumerator CallApi() {
+        UnityWebRequest request = UnityWebRequest.Get($"http://localhost:3000/wordExits/{givenRandomLetters}");
+        yield return request.SendWebRequest();
+
+        if (request.isNetworkError || request.isHttpError) {
+            Debug.LogError("API call failed: " + request.error);
+            yield break; // Exit the coroutine on error
+        }
+
+        string jsonResponse = request.downloadHandler.text;
+        bool apiResult = false; // Default value if parsing fails
+
+        try {
+            // Parse JSON response to extract the boolean value (adjust based on your API's response format)
+            Dictionary<string, bool> data = JsonUtility.FromJson<Dictionary<string, bool>>(jsonResponse);
+            apiResult = data["success"]; // Assuming the key for the boolean result is "success"
+        }
+        catch (System.Exception e) {
+            Debug.LogError("Error parsing JSON response: " + e.Message);
+        }
+
+        // Use the apiResult value for your logic
+        Debug.Log("API result: " + apiResult);
+    }
 
     [ServerRpc(RequireOwnership = false)]
     public void AddUserToListServerRPC(string Username) {
@@ -57,8 +86,14 @@ public class RoundManager : NetworkBehaviour {
     public void AddKeysPressedForUserServerRPC(string Username, KeyCode keyPressed) {
         if (Username != playersTurn) return;
         if (keyPressed == KeyCode.Return) { // Confirm your answer (Basically check if both letters are included in the word and the word exists)
+            if (canAcceptAnswer != true) return;
+            canAcceptAnswer = false;
+
             KeysPressedList.Clear();
             RemoveAllPressedKeysClientRpc();
+
+            StartCoroutine(CallApi());
+            
             hasGivenValidAnswer = true;
             turnTime = 0f;
         } else if (keyPressed == KeyCode.Backspace) { // Remove the last character put in
@@ -81,7 +116,6 @@ public class RoundManager : NetworkBehaviour {
     public void SetUserTurnServerRPC(string newSelectedUser, long TimeSinceTurnStated, string RandomCharacters) {
         HandleUserTurnClientRpc(newSelectedUser, TimeSinceTurnStated, RandomCharacters);
     }
-
 
     [ClientRpc]
     private void AddUserTemplateClientRpc(string userList) {
@@ -149,7 +183,10 @@ public class RoundManager : NetworkBehaviour {
 
                 if (UserList[currentPlayerIndex] != null) {
                     playersTurn = UserList[currentPlayerIndex];
+
                     string RandomCharacters = SearchList[Random.Range(0, SearchList.Count)];
+                    givenRandomLetters = RandomCharacters;
+
                     SetUserTurnServerRPC(UserList[currentPlayerIndex], ReturnUnixTimeInSeconds(), RandomCharacters);
                 }
             } catch {

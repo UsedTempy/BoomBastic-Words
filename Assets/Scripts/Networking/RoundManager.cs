@@ -18,6 +18,8 @@ public class RoundManager : NetworkBehaviour {
     [SerializeField] private List<string> SearchList = new List<string>();
 
     private long clockTime = 0;
+    [SerializeField] private bool gameStarted = false;
+    private float timerGameStart = 10f;
 
     private float turnTimeReset = 10f;
     private float turnTime = 10f;
@@ -27,6 +29,7 @@ public class RoundManager : NetworkBehaviour {
     private bool hasGivenValidAnswer = false;
     private string givenRandomLetters;
     private bool canAcceptAnswer = true;
+    bool overriteAPIResult = true;
 
     [SerializeField] private List<string> KeysPressedList = new List<string>();
 
@@ -34,13 +37,28 @@ public class RoundManager : NetworkBehaviour {
         DateTime currentTime = DateTime.UtcNow;
         return ((DateTimeOffset)currentTime).ToUnixTimeSeconds();
     }
+    //IEnumerator StartGame(int secs) {
+    //    yield return new WaitForSeconds(secs);
+    //    gameStarted = true;
+    //}
 
     public IEnumerator CallApi() {
-        UnityWebRequest request = UnityWebRequest.Get($"http://localhost:3000/wordExits/{givenRandomLetters}");
+        string word = string.Join("", KeysPressedList);
+        
+        if (overriteAPIResult) {
+            canAcceptAnswer = true;
+            hasGivenValidAnswer = true;
+            turnTime = 0f;
+
+            yield break;
+        }
+
+        UnityWebRequest request = UnityWebRequest.Get($"http://localhost:3000/wordExits/{word}");
         yield return request.SendWebRequest();
 
         if (request.isNetworkError || request.isHttpError) {
             Debug.LogError("API call failed: " + request.error);
+            canAcceptAnswer = true;
             yield break; // Exit the coroutine on error
         }
 
@@ -49,7 +67,7 @@ public class RoundManager : NetworkBehaviour {
 
         try {
             // Parse JSON response to extract the boolean value (adjust based on your API's response format)
-            apiResult = (jsonResponse == "true") ? true : false;
+            apiResult = jsonResponse == "true";
         }
         catch (System.Exception e) {
             Debug.LogError("Error parsing JSON response: " + e.Message);
@@ -60,7 +78,7 @@ public class RoundManager : NetworkBehaviour {
         canAcceptAnswer = true;
 
         if (apiResult == true) {
-             hasGivenValidAnswer = true;
+            hasGivenValidAnswer = true;
             turnTime = 0f;
         }
     }
@@ -95,10 +113,10 @@ public class RoundManager : NetworkBehaviour {
             if (canAcceptAnswer != true) return;
             canAcceptAnswer = false;
 
+            StartCoroutine(CallApi());
+
             KeysPressedList.Clear();
             RemoveAllPressedKeysClientRpc();
-
-            StartCoroutine(CallApi());
         } else if (keyPressed == KeyCode.Backspace) { // Remove the last character put in
             if (KeysPressedList.Count == 0) return;
             KeysPressedList.RemoveAt(KeysPressedList.Count-1);
@@ -167,7 +185,18 @@ public class RoundManager : NetworkBehaviour {
 
 
     // -- Index >> LOOP
+
+    //void Start() {
+    //    if (IsServer) StartCoroutine(StartGame(10));
+    //}
+
     void Update() {
+        timerGameStart = Math.Clamp(timerGameStart - Time.deltaTime, 0, 10);
+        if (timerGameStart <= 0 && gameStarted == false) {
+            gameStarted = true;
+        }
+
+        if (!gameStarted) return;
         if (!IsOwnedByServer) return;
         if ((ReturnUnixTimeInSeconds() - clockTime) >= turnTime) {
             clockTime = ReturnUnixTimeInSeconds();

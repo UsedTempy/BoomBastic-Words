@@ -224,28 +224,11 @@ public class RoundManager : NetworkBehaviour {
 
                 if (UserList.Contains(playersTurn) && !hasGivenValidAnswer) {
                     // Deal Damage
+                    Debug.Log($"Damage: {playersTurn}");
                     DamagePlayerClientRpc(playersTurn);
                 }
 
                 hasGivenValidAnswer = false;
-
-                Debug.Log((UserList.Count - DeadUsers.Count));
-                if ((UserList.Count - DeadUsers.Count) == 1) {
-                    gameStarted = false;
-                    timerGameStart = 10f;
-                    playersTurn = null;
-                    ReviveAllUsersClientRpc();
-
-                    string winner = "TWENTYONECHARACTERS";
-                    foreach (var playerName in UserList) {
-                        if (DeadUsers.Contains(playerName)) continue;
-                        winner = playerName;
-                    }
-                    DeadUsers.Clear();
-                    IntermissionTimeAndStateClientRpc(winner);
-
-                    return;
-                }
 
                 if (UserList[currentPlayerIndex] != null) {
                     playersTurn = UserList[currentPlayerIndex];
@@ -262,6 +245,22 @@ public class RoundManager : NetworkBehaviour {
 
             currentPlayerIndex++;
             if (currentPlayerIndex >= UserList.Count) currentPlayerIndex = 0;
+        }
+
+        if ((UserList.Count - DeadUsers.Count) == 1) {
+            gameStarted = false;
+            timerGameStart = 10f;
+            playersTurn = null;
+            ReviveAllUsersClientRpc();
+
+            string winner = "TWENTYONECHARACTERS";
+            foreach (var playerName in UserList)
+            {
+                if (DeadUsers.Contains(playerName)) continue;
+                winner = playerName;
+            }
+            DeadUsers.Clear();
+            IntermissionTimeAndStateClientRpc(winner);
         }
     }
 }

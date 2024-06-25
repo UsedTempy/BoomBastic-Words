@@ -38,6 +38,11 @@ public class GameplayManager : NetworkBehaviour {
     [SerializeField] private GameObject Win;
     [SerializeField] private GameObject Lose;
 
+    [Header("Loading Screen Elements")]
+    [SerializeField] private GameObject LoadingScreenElement;
+    [SerializeField] private GameObject LoadingImage;
+    [SerializeField] private GameObject LoadingText;
+
 
     private List<GameObject> PlayerTemplates = new List<GameObject>();
     private Dictionary<string, GameObject> PlayerIcons = new Dictionary<string, GameObject>();
@@ -54,6 +59,11 @@ public class GameplayManager : NetworkBehaviour {
 
     private long TimerCounterInt = 0;
     private int forcedCharactersUses = 0;
+    private bool IsProcessing = true;
+
+    void Start() {
+        LeanTween.rotateAround(LoadingImage, Vector3.back, 360, 4f).setLoopClamp();
+    }
 
     public void AddUserTemplate(string userNamesList) {
         foreach (var playerTemplate in PlayerTemplates) {
@@ -74,6 +84,12 @@ public class GameplayManager : NetworkBehaviour {
         InputFieldObject.GetComponent<TMP_InputField>().text = "";
 
         return InputField;
+    }
+
+    private void HandleLoadingEffects() {
+        if (IsProcessing == false) return;
+        float SineWave = Mathf.Sin(Time.time);
+        LoadingImage.transform.localScale = new Vector3(5 + SineWave, 5 + SineWave, 1);
     }
 
     public void CreateChatMessage(string Username, string Message) {
@@ -289,7 +305,7 @@ public class GameplayManager : NetworkBehaviour {
     }
 
     public void HandleIntermission() {
-
+        LoadingScreenElement.SetActive(true);
     }
 
     void Update() {

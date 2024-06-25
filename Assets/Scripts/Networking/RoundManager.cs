@@ -194,6 +194,12 @@ public class RoundManager : NetworkBehaviour {
         GameplayManager.ReviveAllUsers();
     }
 
+
+    [ClientRpc]
+    public void IntermissionTimeAndStateClientRpc(string winner) {
+        GameplayManager.ReviveAllUsers();
+    }
+
     // -- Index >> LOOP
 
     //void Start() {
@@ -226,8 +232,16 @@ public class RoundManager : NetworkBehaviour {
                 if ((UserList.Count - DeadUsers.Count) == 0) {
                     gameStarted = false;
                     timerGameStart = 10f;
-                    DeadUsers.Clear();
                     ReviveAllUsersClientRpc();
+
+                    string winner = "TWENTYONECHARACTERS";
+                    foreach (var playerName in UserList) {
+                        if (DeadUsers.Contains(playerName)) continue;
+                        winner = playerName;
+                    }
+                    DeadUsers.Clear();
+                    IntermissionTimeAndStateClientRpc(winner);
+
                     return;
                 }
 

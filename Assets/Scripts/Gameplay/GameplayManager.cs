@@ -288,6 +288,10 @@ public class GameplayManager : NetworkBehaviour {
         }
     }
 
+    public void HandleIntermission() {
+
+    }
+
     void Update() {
        float timerText = Math.Clamp(10 - (ReturnUnixTimeInSeconds() - TimerCounterInt), 0f, 10f);
        TimerTextObject.GetComponent<TMP_Text>().text = timerText.ToString();

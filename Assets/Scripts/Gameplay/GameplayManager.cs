@@ -26,6 +26,8 @@ public class GameplayManager : NetworkBehaviour {
     [SerializeField] private GameObject ArrowObject;
     [SerializeField] private GameObject TurnPlayGameObject;
     [SerializeField] private GameObject TimerTextObject;
+    [SerializeField] private GameObject KeyTemplateObject;
+    [SerializeField] private GameObject KeyParentObject;
  
     [Header("Components")]
     [SerializeField] private Sprite HeartActive;
@@ -34,6 +36,7 @@ public class GameplayManager : NetworkBehaviour {
 
     private List<GameObject> PlayerTemplates = new List<GameObject>();
     private Dictionary<string, GameObject> PlayerIcons = new Dictionary<string, GameObject>();
+    private Dictionary<string, GameObject> KeyDictioary = new Dictionary<string, GameObject>();
     private long TimerCounterInt = 0;
 
     public void AddUserTemplate(string userNamesList) {
@@ -130,6 +133,11 @@ public class GameplayManager : NetworkBehaviour {
     }
 
     public void HandlePlayerTurn(string Username, long TimeStarted, string RandomCharacters) {
+        foreach (var data in KeyDictioary) {
+           Destroy(data.Value);
+           KeyDictioary.Remove(data.Key);
+        }
+
         List<Vector2> generatedPoints = GeneratePointsAround(new Vector2(0, 0), 4.2464f, PlayerIcons.Count);
         int keyIndexOf = PlayerIcons.Keys.ToList().IndexOf(Username);
 
@@ -139,7 +147,14 @@ public class GameplayManager : NetworkBehaviour {
         LeanTween.cancel(ArrowObject);
         LeanTween.rotateZ(ArrowObject, GetLookAtRotation(new Vector2(0, 0), generatedPoints[keyIndexOf]), .2f);
 
-        Debug.Log(RandomCharacters);
+        foreach (var Character in RandomCharacters.Split()) {
+            GameObject newKeyPressedGameObject = Instantiate(KeyTemplateObject, KeyParentObject.transform);
+            newKeyPressedGameObject.transform.SetSiblingIndex(2);
+            newKeyPressedGameObject.name = Character;
+            newKeyPressedGameObject.SetActive(true);
+
+            KeyDictioary.Add(Character, newKeyPressedGameObject);
+        }
     }
 
     void Update() {

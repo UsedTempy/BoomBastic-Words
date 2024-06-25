@@ -6,6 +6,7 @@ using UnityEngine;
 public class PlayerClass : MonoBehaviour {
     private string Username;
     private int Lives = 2;
+    private int Wins = 0;
     private RoundManager RoundManager;
 
     public PlayerClass(string _username, RoundManager _roundManager) {

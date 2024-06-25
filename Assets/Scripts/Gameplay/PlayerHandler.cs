@@ -12,12 +12,21 @@ public class PlayerHandler : NetworkBehaviour {
     [SerializeField] private GameplayManager GameplayManager;
     public Dictionary<string, PlayerClass> playerClasses = new Dictionary<string, PlayerClass>();
 
+    [Header("Loading Screen Elements")]
+    [SerializeField] private GameObject LoadingScreenElement;
+    [SerializeField] private GameObject Win;
+    [SerializeField] private GameObject Lose;
+
     // Start is called before the first frame update
     void Start() {
         if (!IsOwner) return;
         RoundManager = FindObjectOfType<RoundManager>();
         GameplayManager = FindObjectOfType<GameplayManager>();
         Username = $"User_{Mathf.Floor(Random.Range(1000, 9999))}";
+
+        LoadingScreenElement = GameplayManager.LoadingScreenElement;
+        Win = GameplayManager.Win;
+        Lose = GameplayManager.Lose;
 
         PlayerClass newPlayerClass = new PlayerClass(Username, RoundManager);
         playerClasses.Add(Username, newPlayerClass);
@@ -40,6 +49,26 @@ public class PlayerHandler : NetworkBehaviour {
         if (!IsOwner) return;
         string Field = GameplayManager.ReturnMessageField();
         RoundManager.SendMessageServerRPC(Field, GetUserName());
+    }
+
+    IEnumerator handleIntermissionAwait(string winner) {
+        if (winner == this.Username) {
+            Win.SetActive(true);
+        } else Lose.SetActive(true);
+
+        yield return new WaitForSeconds(5);
+
+        if (winner == this.Username) {
+            Win.SetActive(false);
+        } else Lose.SetActive(false);
+
+        LoadingScreenElement.SetActive(true);
+        yield return new WaitForSeconds(5);
+        LoadingScreenElement.SetActive(false);
+    }
+
+    public void SetIntermissionScreen(string winner) {
+        StartCoroutine(handleIntermissionAwait(winner));
     }
 
     void Update() {

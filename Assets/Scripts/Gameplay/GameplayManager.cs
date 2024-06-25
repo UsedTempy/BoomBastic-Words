@@ -35,11 +35,11 @@ public class GameplayManager : NetworkBehaviour {
     [SerializeField] private Sprite HeartInactive;
 
     [Header("Round Conditions")]
-    [SerializeField] private GameObject Win;
-    [SerializeField] private GameObject Lose;
+    [SerializeField] public GameObject Win;
+    [SerializeField] public GameObject Lose;
 
     [Header("Loading Screen Elements")]
-    [SerializeField] private GameObject LoadingScreenElement;
+    [SerializeField] public GameObject LoadingScreenElement;
     [SerializeField] private GameObject LoadingImage;
     [SerializeField] private GameObject LoadingText;
 
@@ -297,6 +297,7 @@ public class GameplayManager : NetworkBehaviour {
     }
 
     public void ReviveAllUsers() {
+        TimerCounterInt = ReturnUnixTimeInSeconds();
         foreach (var playerHandler in FindObjectsOfType<PlayerHandler>()) {
             foreach (var playerObject in playerHandler.playerClasses) {
                 playerObject.Value.ResetLives();
@@ -304,17 +305,20 @@ public class GameplayManager : NetworkBehaviour {
         }
     }
 
-    IEnumerator handleIntermissionAwait(string winner) {
-        Win.SetActive(true);
-        yield return new WaitForSeconds(5);
-        Win.SetActive(false);
-        LoadingScreenElement.SetActive(true);
-        yield return new WaitForSeconds(5);
-        LoadingScreenElement.SetActive(false);
-    }
+    //IEnumerator handleIntermissionAwait(string winner) {
+    //    Win.SetActive(true);
+    //    yield return new WaitForSeconds(5);
+    //    Win.SetActive(false);
+    //    LoadingScreenElement.SetActive(true);
+    //    yield return new WaitForSeconds(5);
+    //    LoadingScreenElement.SetActive(false);
+    //}
 
     public void HandleIntermission(string winner) {
-        StartCoroutine(handleIntermissionAwait(winner));
+        //StartCoroutine(handleIntermissionAwait(winner));
+        foreach (var playerHandler in FindObjectsOfType<PlayerHandler>()) {
+            playerHandler.SetIntermissionScreen(winner);
+        }
     }
 
     void Update() {

@@ -291,7 +291,7 @@ public class GameplayManager : NetworkBehaviour {
 
     public void TakePlayerDamage(string Username) {
         foreach (var playerHandler in FindObjectsOfType<PlayerHandler>()) {
-            if (Username != playerHandler.GetUserName()) return;
+            if (Username != playerHandler.GetUserName()) continue;
             playerHandler.playerClasses[Username].TakeDamage();
         }
     }
@@ -305,17 +305,7 @@ public class GameplayManager : NetworkBehaviour {
         }
     }
 
-    //IEnumerator handleIntermissionAwait(string winner) {
-    //    Win.SetActive(true);
-    //    yield return new WaitForSeconds(5);
-    //    Win.SetActive(false);
-    //    LoadingScreenElement.SetActive(true);
-    //    yield return new WaitForSeconds(5);
-    //    LoadingScreenElement.SetActive(false);
-    //}
-
     public void HandleIntermission(string winner) {
-        //StartCoroutine(handleIntermissionAwait(winner));
         foreach (var playerHandler in FindObjectsOfType<PlayerHandler>()) {
             playerHandler.SetIntermissionScreen(winner);
         }

@@ -28,6 +28,10 @@ public class PlayerHandler : NetworkBehaviour {
         Win = GameplayManager.Win;
         Lose = GameplayManager.Lose;
 
+        if (RoundManager.gameStarted == false) {
+            LoadingScreenElement.SetActive(true);
+        }
+
         PlayerClass newPlayerClass = new PlayerClass(Username, RoundManager);
         playerClasses.Add(Username, newPlayerClass);
 

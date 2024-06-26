@@ -199,6 +199,8 @@ public class GameplayManager : NetworkBehaviour {
         GivenKeys.Clear();
         ForcedUsedKey.Clear();
 
+        LoadingScreenElement.SetActive(false);
+
         List<Vector2> generatedPoints = GeneratePointsAround(new Vector2(0, 0), 4.2464f, PlayerIcons.Count);
         int keyIndexOf = PlayerIcons.Keys.ToList().IndexOf(Username);
 

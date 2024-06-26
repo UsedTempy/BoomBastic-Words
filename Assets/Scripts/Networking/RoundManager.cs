@@ -20,7 +20,7 @@ public class RoundManager : NetworkBehaviour {
     [SerializeField] private Dictionary<string, int> UserWins = new Dictionary<string, int>();
  
     private long clockTime = 0;
-    [SerializeField] private bool gameStarted = false;
+    public bool gameStarted = false;
     private float timerGameStart = 10f;
 
     private float turnTimeReset = 10f;

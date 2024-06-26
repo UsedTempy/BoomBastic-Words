@@ -309,7 +309,7 @@ public class GameplayManager : NetworkBehaviour {
 
     public void AddWinToUser(string Username, int AmountOfWins) {
         if (PlayerTemplates[Username] == null) return;
-        PlayerTemplates[Username].transform.Find("Wins").GetComponent<TMP_Text>().text = AmountOfWins.ToString();
+        PlayerTemplates[Username].transform.Find("Wins").GetComponent<TMP_Text>().text = $"Wins: {AmountOfWins}";
     }
 
     public void HandleIntermission(string winner) {

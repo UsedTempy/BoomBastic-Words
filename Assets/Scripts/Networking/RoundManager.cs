@@ -263,8 +263,7 @@ public class RoundManager : NetworkBehaviour {
             ReviveAllUsersClientRpc();
 
             string winner = "TWENTYONECHARACTERS";
-            foreach (var playerName in UserList)
-            {
+            foreach (var playerName in UserList) {
                 if (DeadUsers.Contains(playerName)) continue;
                 winner = playerName;
             }

@@ -44,7 +44,8 @@ public class GameplayManager : NetworkBehaviour {
     [SerializeField] private GameObject LoadingText;
 
 
-    private List<GameObject> PlayerTemplates = new List<GameObject>();
+    //private List<GameObject> PlayerTemplates = new List<GameObject>();
+    private Dictionary<string, GameObject> PlayerTemplates = new Dictionary<string, GameObject>();
     private Dictionary<string, GameObject> PlayerIcons = new Dictionary<string, GameObject>();
 
     private List<string> KeysPressed = new List<string>();
@@ -67,15 +68,16 @@ public class GameplayManager : NetworkBehaviour {
 
     public void AddUserTemplate(string userNamesList) {
         foreach (var playerTemplate in PlayerTemplates) {
-            Destroy(playerTemplate);
+            Destroy(playerTemplate.Value);
         }
+        PlayerTemplates.Clear();
 
         foreach (var Username in userNamesList.Split(',')) {
             GameObject NewPlayerTemplate = Instantiate(PlayerTemplate, PlayerTemplateContainer.transform);
             NewPlayerTemplate.transform.Find("PlayerName").GetComponent<TMP_Text>().text = Username;
             NewPlayerTemplate.SetActive(true);
 
-            PlayerTemplates.Add(NewPlayerTemplate);
+            PlayerTemplates.Add(Username, NewPlayerTemplate);
         }
     }
 
@@ -305,6 +307,11 @@ public class GameplayManager : NetworkBehaviour {
         }
     }
 
+    public void AddWinToUser(string Username, int AmountOfWins) {
+        if (PlayerTemplates[Username] == null) return;
+        PlayerTemplates[Username].transform.Find("Wins").GetComponent<TMP_Text>().text = AmountOfWins.ToString();
+    }
+
     public void HandleIntermission(string winner) {
         foreach (var playerHandler in FindObjectsOfType<PlayerHandler>()) {
             playerHandler.SetIntermissionScreen(winner);
@@ -312,6 +319,8 @@ public class GameplayManager : NetworkBehaviour {
     }
 
     void Update() {
+        HandleLoadingEffects();
+
        float timerText = Math.Clamp(10 - (ReturnUnixTimeInSeconds() - TimerCounterInt), 0f, 10f);
        TimerTextObject.GetComponent<TMP_Text>().text = timerText.ToString();
     }

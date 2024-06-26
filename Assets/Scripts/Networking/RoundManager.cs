@@ -17,6 +17,7 @@ public class RoundManager : NetworkBehaviour {
     [SerializeField] private GameplayManager GameplayManager;
     [SerializeField] private List<string> SearchList = new List<string>();
     [SerializeField] private List<string> DeadUsers = new List<string>();
+    [SerializeField] private Dictionary<string, int> UserWins = new Dictionary<string, int>();
  
     private long clockTime = 0;
     [SerializeField] private bool gameStarted = false;
@@ -97,6 +98,8 @@ public class RoundManager : NetworkBehaviour {
             }
             else playersEmpty += userName + ",";
         }
+
+        UserWins.Add(Username, 0);
 
         AddUserTemplateClientRpc(playersEmpty);
         UpdatePlayerTemplatesClientRpc(playersEmpty);
@@ -200,6 +203,11 @@ public class RoundManager : NetworkBehaviour {
         GameplayManager.HandleIntermission(winner);
     }
 
+    [ClientRpc]
+    public void AddWinToPlayerClientRpc(string Username, int AmountOfWins) {
+        GameplayManager.AddWinToUser(Username, AmountOfWins);
+    }
+
     // -- Index >> LOOP
 
     //void Start() {
@@ -214,6 +222,7 @@ public class RoundManager : NetworkBehaviour {
 
         if (!gameStarted) return;
         if (!IsOwner) return;
+
         if ((ReturnUnixTimeInSeconds() - clockTime) >= turnTime) {
             clockTime = ReturnUnixTimeInSeconds();
             turnTime = turnTimeReset;
@@ -260,6 +269,12 @@ public class RoundManager : NetworkBehaviour {
                 winner = playerName;
             }
             DeadUsers.Clear();
+
+            if (winner != null && UserWins[winner] != null) {
+                UserWins[winner]++;
+                AddWinToPlayerClientRpc(winner, UserWins[winner]);
+            }
+
             IntermissionTimeAndStateClientRpc(winner);
         }
     }

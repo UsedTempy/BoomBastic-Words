@@ -31,7 +31,7 @@ public class RoundManager : NetworkBehaviour {
     private bool hasGivenValidAnswer = false;
     private string givenRandomLetters;
     private bool canAcceptAnswer = true;
-    bool overriteAPIResult = true;
+    bool overriteAPIResult = false;
 
     [SerializeField] private List<string> KeysPressedList = new List<string>();
 
